@@ -1,5 +1,138 @@
 extends layout
 
 block content
-  h1= title
-  p Welcome to #{title}
+ header.topbar
+        button.brand-mark(onclick="go('home')", aria-label="Crumb and Cherry, go to home")
+          svg(width="30", height="30", viewBox="0 0 30 30", fill="none", xmlns="http://www.w3.org/2000/svg", aria-hidden="true")
+            path(d="M6 14h18v9a2 2 0 0 1-2 2H8a2 2 0 0 1-2-2v-9Z", fill="var(--pink-blush)")
+            path(d="M4 14c0-2.2 1.8-4 4-4h14c2.2 0 4 1.8 4 4H4Z", fill="var(--pink)")
+            circle(cx="15", cy="6", r="2.4", fill="var(--pink-deep)")
+            rect(x="14.2", y="8.4", width="1.6", height="3", fill="var(--brown-soft)")
+          span.brand Cakes By Isabelle
+
+        nav.tabs(aria-label="Primary")
+          button(data-route="home", onclick="go('home')", aria-current="page") Menu
+          button(data-route="login", onclick="go('login')") Log in
+          button(data-route="register", onclick="go('register')") Register
+          button(data-route="orders", onclick="go('orders')") My Orders
+
+        .session-pill
+          span#sessionLabel Not signed in
+          button.ghost-btn#signOutBtn(style="display:none", onclick="signOut()") Sign out
+
+      main
+
+        //- ============ HOME / MENU ============
+        section.screen#screen-home
+          .hero
+            div
+              .hero-eyebrow Small-batch bakery, made to order
+              h1 Cakes worth clearing your afternoon for.
+              p.lede.
+                Every order is baked fresh the morning it ships — no freezers, no shortcuts.
+                Pick a favourite below, or tell us the occasion and we'll build something around it.
+              .hero-actions
+                button.btn-primary(onclick="go('register')") Create an account
+                button.btn-secondary(onclick="go('login')") Sign in
+            .hero-art
+              svg(viewBox="0 0 200 200", fill="none", xmlns="http://www.w3.org/2000/svg", aria-hidden="true")
+                ellipse(cx="100", cy="172", rx="70", ry="10", fill="var(--pink-blush)")
+                rect(x="42", y="120", width="116", height="42", rx="6", fill="var(--brown-soft)")
+                rect(x="42", y="120", width="116", height="10", fill="var(--pink-blush-2)")
+                rect(x="52", y="76", width="96", height="46", rx="6", fill="var(--pink)")
+                rect(x="52", y="76", width="96", height="10", fill="var(--pink-blush)")
+                rect(x="64", y="38", width="72", height="40", rx="6", fill="var(--brown-mid)")
+                rect(x="64", y="38", width="72", height="9", fill="var(--pink-blush-2)")
+                path(d="M64 76c6-6 12 6 18 0s12 6 18 0 12 6 18 0 12 6 18 0", stroke="var(--pink-blush)", stroke-width="3", fill="none", stroke-linecap="round")
+                path(d="M52 122c6-6 12 6 18 0s12 6 18 0 12 6 18 0 12 6 18 0", stroke="var(--pink-blush)", stroke-width="3", fill="none", stroke-linecap="round")
+                circle(cx="100", cy="26", r="7", fill="#C24B67")
+                path(d="M100 19c0-8 6-12 10-13", stroke="var(--brown-mid)", stroke-width="2.5", fill="none", stroke-linecap="round")
+
+          section.menu
+            .menu-heading
+              h2 This week's menu
+              p Order by Thursday for weekend collection.
+            .cake-grid#cakeGrid
+
+        //- ============ LOGIN ============
+        section.screen#screen-login
+          .auth-wrap
+            .auth-card
+              .auth-icon
+                svg(viewBox="0 0 60 60", fill="none", xmlns="http://www.w3.org/2000/svg", aria-hidden="true")
+                  rect(x="10", y="26", width="40", height="26", rx="8", fill="var(--pink-blush)")
+                  path(d="M18 26v-6a12 12 0 0 1 24 0v6", stroke="var(--brown-mid)", stroke-width="4", fill="none", stroke-linecap="round")
+                  circle(cx="30", cy="38", r="4.5", fill="var(--pink-deep)")
+                  rect(x="28.5", y="40", width="3", height="7", rx="1.5", fill="var(--pink-deep)")
+              h2 Welcome back
+              p.sub Log in to track your orders.
+
+              .form-note#loginNote(style="display:none")
+
+              form(onsubmit="return handleLogin(event)", novalidate)
+                .field
+                  label(for="loginEmail") Email
+                  input(type="email", id="loginEmail", autocomplete="email", placeholder="you@example.com", required)
+                  .field-error#loginEmailError
+                .field
+                  label(for="loginPassword") Password
+                  input(type="password", id="loginPassword", autocomplete="current-password", placeholder="••••••••", required)
+                  .field-error#loginPasswordError
+                button.auth-submit(type="submit") Log in
+
+              .auth-switch
+                | New here?
+                button(type="button", onclick="go('register')") Create an account
+
+        //- ============ REGISTER ============
+        section.screen#screen-register
+          .auth-wrap
+            .auth-card
+              .auth-icon
+                svg(viewBox="0 0 60 60", fill="none", xmlns="http://www.w3.org/2000/svg", aria-hidden="true")
+                  circle(cx="30", cy="21", r="10", fill="var(--pink-blush)")
+                  path(d="M30 15a6 6 0 0 1 6 6", stroke="var(--pink-deep)", stroke-width="2.5", fill="none", stroke-linecap="round")
+                  path(d="M12 50c2-11 9.5-17 18-17s16 6 18 17", stroke="var(--brown-mid)", stroke-width="4", fill="none", stroke-linecap="round")
+              h2 Create your account
+              p.sub Save your details for faster checkout.
+
+              form(onsubmit="return handleRegister(event)", novalidate)
+                .field
+                  label(for="regName") Full name
+                  input(type="text", id="regName", autocomplete="name", placeholder="Jane Doe", required)
+                  .field-error#regNameError
+                .field
+                  label(for="regEmail") Email
+                  input(type="email", id="regEmail", autocomplete="email", placeholder="you@example.com", required)
+                  .field-error#regEmailError
+                .field
+                  label(for="regPassword") Password
+                  input(type="password", id="regPassword", autocomplete="new-password", placeholder="At least 8 characters", required)
+                  .field-error#regPasswordError
+                button.auth-submit(type="submit") Create account
+
+              .auth-switch
+                | Already have an account?
+                button(type="button", onclick="go('login')") Log in
+
+        //- ============ ORDERS ============
+        section.screen#screen-orders
+          .orders-wrap#ordersLoggedOut(style="display:none")
+            .locked-state
+              svg(viewBox="0 0 60 60", fill="none", xmlns="http://www.w3.org/2000/svg", aria-hidden="true")
+                rect(x="10", y="26", width="40", height="26", rx="8", fill="var(--pink-blush)")
+                path(d="M18 26v-6a12 12 0 0 1 24 0v6", stroke="var(--brown-mid)", stroke-width="4", fill="none", stroke-linecap="round")
+                circle(cx="30", cy="38", r="4.5", fill="var(--pink-deep)")
+              h3 Log in to see your orders
+              p Once you're signed in, every cake you order will show up here with live status.
+              button.btn-primary(onclick="go('login')") Log in
+
+          .orders-wrap#ordersLoggedIn(style="display:none")
+            .orders-header
+              div
+                h1 My orders
+                p#ordersSubtitle Everything you've ordered from us.
+            #ordersList
+
+    script(src="/javascripts/cake-app.js")
+
