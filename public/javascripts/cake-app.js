@@ -9,14 +9,14 @@
     { id: 'c6', name: 'Classic Red Velvet', desc: 'Cocoa sponge, tangy cream cheese frosting.', price: 33 },
   ];
 
-  function cakeIcon() {
+function cakeIcon() {
     return `<svg width="88" height="88" viewBox="0 0 88 88" fill="none" xmlns="http://www.w3.org/2000/svg" aria-hidden="true">
       <ellipse cx="44" cy="74" rx="30" ry="5" fill="var(--pink-blush)"/>
       <rect x="18" y="46" width="52" height="22" rx="5" fill="var(--brown-soft)"/>
       <rect x="24" y="26" width="40" height="22" rx="5" fill="var(--pink)"/>
-      <path d="M24 48c3-4 6 4 9 0s6 4 9 0 6 4 9 0 6 4 9 0" stroke="var(--pink-blush)" stroke-width="2.5" fill="none" stroke-linecap="round"/>
-      <circle cx="44" cy="18" r="5" fill="#C24B67"/>
-      <path d="M44 13c0-5 4-8 6-9" stroke="var(--brown-mid)" stroke-width="2" fill="none" stroke-linecap="round"/>
+      <path d="M24 48c3-4 7 4 10 0s7 4 10 0 7 4 10 0 7 4 10 0" stroke="var(--pink-blush)" stroke-width="2.5" fill="none" stroke-linecap="round"/>
+      <circle cx="44" cy="21" r="5" fill="var(--cherry, #C24B67)"/>
+      <path d="M44 16c0-5 4-8 6-9" stroke="var(--brown-mid)" stroke-width="2" fill="none" stroke-linecap="round"/>
     </svg>`;
   }
 

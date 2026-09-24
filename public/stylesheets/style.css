@@ -128,10 +128,3 @@ h1, h2, h3, h4, h5, h6, .h1, .h2, .h3, .h4, .h5, .h6, .brand {
 
 /* Scalloped top edge on the login / register cards */
 .auth-card { overflow: hidden; }
-.auth-card::before {
-  content: "";
-  position: absolute; top: 0; left: 0; right: 0; height: 14px;
-  background-image: radial-gradient(circle at 10px 0, transparent 9px, var(--pink) 9px);
-  background-size: 20px 14px;
-  background-repeat: repeat-x;
-}

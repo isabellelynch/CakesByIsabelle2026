@@ -1,10 +1,7 @@
 section.screen.d-none#screen-orders
   #ordersLoggedOut.container.py-5.d-none(style="max-width:880px")
     .text-center.py-5
-      svg.mb-3(width="70", height="70", viewBox="0 0 60 60", fill="none", xmlns="http://www.w3.org/2000/svg", aria-hidden="true")
-        rect(x="10", y="26", width="40", height="26", rx="8", fill="var(--pink-blush)")
-        path(d="M18 26v-6a12 12 0 0 1 24 0v6", stroke="var(--brown-mid)", stroke-width="4", fill="none", stroke-linecap="round")
-        circle(cx="30", cy="38", r="4.5", fill="var(--pink-deep)")
+      +cakeIcon(88)
       h2.h4 Log in to see your orders
       p.text-body-secondary.mx-auto(style="max-width:40ch") Once you're signed in, every cake you order will show up here with live status.
       button.btn.btn-primary.rounded-pill.px-4(type="button", onclick="go('login')") Log in
