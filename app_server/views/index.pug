@@ -1,46 +1,39 @@
 extends layout
 
 block content
- 
+  main.flex-grow-1
+    section.screen.d-none#screen-home
+      .container.py-5
+        .row.align-items-center.g-5
+          .col-md-7
+            p.fw-semibold.text-accent.mb-2 Small-batch bakery, made to order
+            h1.display-5.fw-medium.mb-3 Cakes worth clearing your afternoon for.
+            p.lead.text-body-secondary.
+              Every order is baked fresh the morning it ships — no freezers, no shortcuts.
+              Pick a favourite below, or tell us the occasion and we'll build something around it.
+            .d-flex.flex-wrap.gap-2.mt-4
+              button.btn.btn-primary.btn-lg.rounded-pill.px-4(type="button", onclick="go('register')") Create an account
+              button.btn.btn-outline-secondary.btn-lg.rounded-pill.px-4(type="button", onclick="go('login')") Sign in
+          .col-md-5.order-first.order-md-last.text-center
+            svg.w-100(style="max-width:340px", viewBox="0 0 200 200", fill="none", xmlns="http://www.w3.org/2000/svg", aria-hidden="true")
+              ellipse(cx="100", cy="172", rx="70", ry="10", fill="var(--pink-blush)")
+              rect(x="42", y="120", width="116", height="42", rx="6", fill="var(--brown-soft)")
+              rect(x="42", y="120", width="116", height="10", fill="var(--pink-blush-2)")
+              rect(x="52", y="76", width="96", height="46", rx="6", fill="var(--pink)")
+              rect(x="52", y="76", width="96", height="10", fill="var(--pink-blush)")
+              rect(x="64", y="38", width="72", height="40", rx="6", fill="var(--brown-mid)")
+              rect(x="64", y="38", width="72", height="9", fill="var(--pink-blush-2)")
+              path(d="M64 76c6-6 12 6 18 0s12 6 18 0 12 6 18 0 12 6 18 0", stroke="var(--pink-blush)", stroke-width="3", fill="none", stroke-linecap="round")
+              path(d="M52 122c6-6 12 6 18 0s12 6 18 0 12 6 18 0 12 6 18 0", stroke="var(--pink-blush)", stroke-width="3", fill="none", stroke-linecap="round")
+              circle(cx="100", cy="26", r="7", fill="#C24B67")
+              path(d="M100 19c0-8 6-12 10-13", stroke="var(--brown-mid)", stroke-width="2.5", fill="none", stroke-linecap="round")
 
-  .session-pill
-    span#sessionLabel Not signed in
-    button.ghost-btn#signOutBtn(style="display:none", onclick="signOut()") Sign out
-  main
-    section.screen#screen-home
-      .hero
-        div
-          .hero-eyebrow Small-batch bakery, made to order
-          h1 Cakes worth clearing your afternoon for.
-          p.lede.
-            Every order is baked fresh the morning it ships — no freezers, no shortcuts.
-            Pick a favourite below, or tell us the occasion and we'll build something around it.
-          .hero-actions
-            button.btn-primary(onclick="go('register')") Create an account
-            button.btn-secondary(onclick="go('login')") Sign in
-        .hero-art
-          svg(viewBox="0 0 200 200", fill="none", xmlns="http://www.w3.org/2000/svg", aria-hidden="true")
-            ellipse(cx="100", cy="172", rx="70", ry="10", fill="var(--pink-blush)")
-            rect(x="42", y="120", width="116", height="42", rx="6", fill="var(--brown-soft)")
-            rect(x="42", y="120", width="116", height="10", fill="var(--pink-blush-2)")
-            rect(x="52", y="76", width="96", height="46", rx="6", fill="var(--pink)")
-            rect(x="52", y="76", width="96", height="10", fill="var(--pink-blush)")
-            rect(x="64", y="38", width="72", height="40", rx="6", fill="var(--brown-mid)")
-            rect(x="64", y="38", width="72", height="9", fill="var(--pink-blush-2)")
-            path(d="M64 76c6-6 12 6 18 0s12 6 18 0 12 6 18 0 12 6 18 0", stroke="var(--pink-blush)", stroke-width="3", fill="none", stroke-linecap="round")
-            path(d="M52 122c6-6 12 6 18 0s12 6 18 0 12 6 18 0 12 6 18 0", stroke="var(--pink-blush)", stroke-width="3", fill="none", stroke-linecap="round")
-            circle(cx="100", cy="26", r="7", fill="#C24B67")
-            path(d="M100 19c0-8 6-12 10-13", stroke="var(--brown-mid)", stroke-width="2.5", fill="none", stroke-linecap="round")
+      section.container.pb-5
+        .d-flex.flex-wrap.justify-content-between.align-items-baseline.gap-2.mb-4
+          h2.h3.mb-0 This week's menu
+          p.text-body-secondary.mb-0 Order by Thursday for weekend collection.
+        #cakeGrid.row.g-4
 
-    
-    section.menu
-      .menu-heading
-        h2 This week's menu
-        p Order by Thursday for weekend collection.
-      .cake-grid#cakeGrid
-          
-        
-
-
-      
-
+    include login
+    include register
+    include orders

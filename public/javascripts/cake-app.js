@@ -10,7 +10,7 @@
   ];
 
   function cakeIcon() {
-    return `<svg viewBox="0 0 88 88" fill="none" xmlns="http://www.w3.org/2000/svg" aria-hidden="true">
+    return `<svg width="88" height="88" viewBox="0 0 88 88" fill="none" xmlns="http://www.w3.org/2000/svg" aria-hidden="true">
       <ellipse cx="44" cy="74" rx="30" ry="5" fill="var(--pink-blush)"/>
       <rect x="18" y="46" width="52" height="22" rx="5" fill="var(--brown-soft)"/>
       <rect x="24" y="26" width="40" height="22" rx="5" fill="var(--pink)"/>
@@ -21,7 +21,7 @@
   }
 
   function orderIcon() {
-    return `<svg viewBox="0 0 52 52" fill="none" xmlns="http://www.w3.org/2000/svg" aria-hidden="true">
+    return `<svg width="52" height="52" viewBox="0 0 52 52" fill="none" xmlns="http://www.w3.org/2000/svg" aria-hidden="true">
       <rect x="8" y="26" width="36" height="18" rx="4" fill="var(--brown-soft)"/>
       <rect x="12" y="14" width="28" height="14" rx="4" fill="var(--pink)"/>
       <circle cx="26" cy="9" r="3.4" fill="#C24B67"/>
@@ -31,13 +31,17 @@
   function renderMenu() {
     const grid = document.getElementById('cakeGrid');
     grid.innerHTML = CAKES.map(c => `
-      <div class="cake-card">
-        <div class="cake-icon-wrap">${cakeIcon()}</div>
-        <h3>${c.name}</h3>
-        <div class="desc">${c.desc}</div>
-        <div class="add-row">
-          <span class="price-tag">€${c.price}</span>
-          <button class="add-btn" aria-label="Add ${c.name} to order" onclick="addOrder('${c.id}')">+</button>
+      <div class="col-12 col-sm-6 col-lg-4">
+        <div class="card h-100">
+          <div class="card-body d-flex flex-column text-center">
+            <div class="mb-2">${cakeIcon()}</div>
+            <h3 class="h5 card-title">${c.name}</h3>
+            <p class="card-text small text-body-secondary">${c.desc}</p>
+            <div class="d-flex justify-content-between align-items-center mt-auto">
+              <span class="badge rounded-pill price-badge fs-6 fw-semibold">€${c.price}</span>
+              <button class="btn btn-add rounded-circle" aria-label="Add ${c.name} to order" onclick="addOrder('${c.id}')">+</button>
+            </div>
+          </div>
         </div>
       </div>
     `).join('');
@@ -96,7 +100,11 @@
   }
 
   // ---------- validation ----------
-  function setError(id, msg) { document.getElementById(id).textContent = msg || ''; }
+  function setError(id, msg) {
+    const el = document.getElementById(id);
+    el.textContent = msg || '';
+    el.previousElementSibling.classList.toggle('is-invalid', !!msg);
+  }
   function isValidEmail(v) { return /^[^\s@]+@[^\s@]+\.[^\s@]+$/.test(v); }
 
   function handleRegister(e) {
@@ -134,7 +142,7 @@
     let ok = true;
 
     setError('loginEmailError', ''); setError('loginPasswordError', '');
-    document.getElementById('loginNote').style.display = 'none';
+    document.getElementById('loginNote').classList.add('d-none');
 
     if (!isValidEmail(email)) { setError('loginEmailError', 'Enter a valid email address.'); ok = false; }
     if (password.length < 1) { setError('loginPasswordError', 'Enter your password.'); ok = false; }
@@ -162,7 +170,7 @@
   function showNote(id, msg) {
     const el = document.getElementById(id);
     el.textContent = msg;
-    el.style.display = 'block';
+    el.classList.remove('d-none');
   }
 
   // ---------- orders screen ----------
@@ -172,12 +180,12 @@
     const loggedIn = document.getElementById('ordersLoggedIn');
 
     if (!session) {
-      loggedOut.style.display = 'block';
-      loggedIn.style.display = 'none';
+      loggedOut.classList.remove('d-none');
+      loggedIn.classList.add('d-none');
       return;
     }
-    loggedOut.style.display = 'none';
-    loggedIn.style.display = 'block';
+    loggedOut.classList.add('d-none');
+    loggedIn.classList.remove('d-none');
 
     document.getElementById('ordersSubtitle').textContent = `Signed in as ${session.name}`;
     const all = getOrders();
@@ -186,26 +194,32 @@
 
     if (list.length === 0) {
       listEl.innerHTML = `
-        <div class="empty-state">
-          ${orderIcon()}
-          <h3>No orders yet</h3>
-          <p>Head to the menu and pick something for the weekend.</p>
+        <div class="text-center text-body-secondary py-5">
+          <div class="mb-3">${orderIcon()}</div>
+          <h2 class="h5">No orders yet</h2>
+          <p class="mb-0">Head to the menu and pick something for the weekend.</p>
         </div>`;
       return;
     }
 
     const statusLabel = { baking: 'Baking', ready: 'Ready for pickup', delivered: 'Delivered' };
-    const statusClass = { baking: 'status-baking', ready: 'status-ready', delivered: 'status-delivered' };
+    const statusClass = {
+      baking: 'bg-warning-subtle text-warning-emphasis',
+      ready: 'price-badge',
+      delivered: 'bg-success-subtle text-success-emphasis'
+    };
 
     listEl.innerHTML = list.map(o => `
-      <div class="order-card">
-        <div class="icon">${orderIcon()}</div>
-        <div class="order-info">
-          <h3>${o.cake}</h3>
-          <div class="meta">Order #${o.id} · ${o.date}</div>
+      <div class="card mb-3">
+        <div class="card-body d-flex flex-wrap align-items-center gap-3">
+          <div>${orderIcon()}</div>
+          <div class="flex-grow-1">
+            <h3 class="h6 fw-semibold mb-1">${o.cake}</h3>
+            <div class="small text-body-secondary">Order #${o.id} · ${o.date}</div>
+          </div>
+          <span class="badge rounded-pill ${statusClass[o.status]}">${statusLabel[o.status]}</span>
+          <div class="fw-semibold text-end ms-auto" style="min-width:56px">€${o.price}</div>
         </div>
-        <span class="status-pill ${statusClass[o.status]}">${statusLabel[o.status]}</span>
-        <div class="order-price">€${o.price}</div>
       </div>
     `).join('');
   }
@@ -217,10 +231,10 @@
     const signOutBtn = document.getElementById('signOutBtn');
     if (session) {
       label.textContent = `Hi, ${session.name.split(' ')[0]}`;
-      signOutBtn.style.display = 'inline-block';
+      signOutBtn.classList.remove('d-none');
     } else {
       label.textContent = 'Not signed in';
-      signOutBtn.style.display = 'none';
+      signOutBtn.classList.add('d-none');
     }
   }
 
@@ -231,13 +245,20 @@
     if(route == null || route == undefined) return;
     if (!ROUTES.includes(route)) route = 'home';
     ROUTES.forEach(r => {
-      document.getElementById('screen-' + r).classList.toggle('active', r === route);
+      document.getElementById('screen-' + r).classList.toggle('d-none', r !== route);
     });
-    document.querySelectorAll('nav.tabs button').forEach(btn => {
-      if (btn.dataset.route === route) btn.setAttribute('aria-current', 'page');
+    document.querySelectorAll('#mainNav .nav-link[data-route]').forEach(btn => {
+      const isCurrent = btn.dataset.route === route;
+      btn.classList.toggle('active', isCurrent);
+      if (isCurrent) btn.setAttribute('aria-current', 'page');
       else btn.removeAttribute('aria-current');
     });
-    document.getElementById('loginNote').style.display = 'none';
+    document.getElementById('loginNote').classList.add('d-none');
+    // close the mobile menu after picking a page
+    const nav = document.getElementById('mainNav');
+    if (window.bootstrap && nav.classList.contains('show')) {
+      bootstrap.Collapse.getOrCreateInstance(nav).hide();
+    }
     if (route === 'orders') renderOrders();
     window.location.hash = route;
     window.scrollTo({ top: 0, behavior: 'instant' });
@@ -249,7 +270,9 @@
   });
 
   // ---------- init ----------
-  renderMenu();
-  updateSessionUI();
-  const initial = window.location.hash.replace('#', '') || 'home';
-  go(initial);
+  if (document.getElementById('screen-home')) {
+    renderMenu();
+    updateSessionUI();
+    const initial = window.location.hash.replace('#', '') || 'home';
+    go(initial);
+  }

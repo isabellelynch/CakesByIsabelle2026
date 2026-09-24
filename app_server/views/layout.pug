@@ -1,28 +1,44 @@
 doctype html
-html
+html(lang="en")
   head
-    meta(name='viewport', content='width=device-width, initial-scale=1.0')
+    meta(charset="utf-8")
+    meta(name="viewport", content="width=device-width, initial-scale=1")
     title= title
-    link(rel='stylesheet', href='/stylesheets/bootstrap.min.css')
-    link(rel='stylesheet', href='/stylesheets/font-awesome.min.css')
-    link(rel='stylesheet', href='/stylesheets/style.css')
-  body
-    header.topbar
-      button.brand-mark(onclick="go('home')", aria-label="Crumb and Cherry, go to home")
-        svg(width="30", height="30", viewBox="0 0 30 30", fill="none", xmlns="http://www.w3.org/2000/svg", aria-hidden="true")
-          path(d="M6 14h18v9a2 2 0 0 1-2 2H8a2 2 0 0 1-2-2v-9Z", fill="var(--pink-blush)")
-          path(d="M4 14c0-2.2 1.8-4 4-4h14c2.2 0 4 1.8 4 4H4Z", fill="var(--pink)")
-          circle(cx="15", cy="6", r="2.4", fill="var(--pink-deep)")
-          rect(x="14.2", y="8.4", width="1.6", height="3", fill="var(--brown-soft)")
-        span.brand #{title}
+    script.
+      document.documentElement.setAttribute('data-bs-theme',
+        matchMedia('(prefers-color-scheme: dark)').matches ? 'dark' : 'light');
+    link(rel="stylesheet", href="/stylesheets/bootstrap.min.css")
+    link(rel="stylesheet", href="/stylesheets/font-awesome.min.css")
+    link(rel="stylesheet", href="/stylesheets/style.css")
+  body.d-flex.flex-column.min-vh-100
+    nav.navbar.navbar-expand-md.navbar-dark.navbar-cake.sticky-top(aria-label="Primary")
+      .container
+        button.navbar-brand.border-0.bg-transparent.d-flex.align-items-center.gap-2.p-0(type="button", onclick="go('home')", aria-label=title + ', go to home')
+          svg(width="30", height="30", viewBox="0 0 30 30", fill="none", xmlns="http://www.w3.org/2000/svg", aria-hidden="true")
+            path(d="M6 14h18v9a2 2 0 0 1-2 2H8a2 2 0 0 1-2-2v-9Z", fill="var(--pink-blush)")
+            path(d="M4 14c0-2.2 1.8-4 4-4h14c2.2 0 4 1.8 4 4H4Z", fill="var(--pink)")
+            circle(cx="15", cy="6", r="2.4", fill="var(--pink-deep)")
+            rect(x="14.2", y="8.4", width="1.6", height="3", fill="var(--brown-soft)")
+          span.brand #{title}
 
-      nav.tabs(aria-label="Primary")
-        button(data-route="home", onclick="go('home')", aria-current="page") Menu
-        button(data-route="login", onclick="go('login')") Log in
-        button(data-route="register", onclick="go('register')") Register
-        button(data-route="orders", onclick="go('orders')") My Orders
-    
+        button.navbar-toggler(type="button", data-bs-toggle="collapse", data-bs-target="#mainNav", aria-controls="mainNav", aria-expanded="false", aria-label="Toggle navigation")
+          span.navbar-toggler-icon
+
+        #mainNav.collapse.navbar-collapse
+          ul.navbar-nav.nav-pills.mx-md-auto.gap-md-1.my-3.my-md-0
+            li.nav-item
+              button.nav-link.px-3(type="button", data-route="home", onclick="go('home')") Menu
+            li.nav-item
+              button.nav-link.px-3(type="button", data-route="login", onclick="go('login')") Log in
+            li.nav-item
+              button.nav-link.px-3(type="button", data-route="register", onclick="go('register')") Register
+            li.nav-item
+              button.nav-link.px-3(type="button", data-route="orders", onclick="go('orders')") My Orders
+          .d-flex.align-items-center.gap-2
+            span#sessionLabel.small.session-label Not signed in
+            button#signOutBtn.btn.btn-outline-light.btn-sm.rounded-pill.d-none(type="button", onclick="signOut()") Sign out
+
     block content
 
-    script(src='/javascripts/cake-app.js')
-
+    script(src="/javascripts/bootstrap.min.js")
+    script(src="/javascripts/cake-app.js")
