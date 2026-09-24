@@ -7,6 +7,22 @@ html
     link(rel='stylesheet', href='/stylesheets/font-awesome.min.css')
     link(rel='stylesheet', href='/stylesheets/style.css')
   body
+    header.topbar
+      button.brand-mark(onclick="go('home')", aria-label="Crumb and Cherry, go to home")
+        svg(width="30", height="30", viewBox="0 0 30 30", fill="none", xmlns="http://www.w3.org/2000/svg", aria-hidden="true")
+          path(d="M6 14h18v9a2 2 0 0 1-2 2H8a2 2 0 0 1-2-2v-9Z", fill="var(--pink-blush)")
+          path(d="M4 14c0-2.2 1.8-4 4-4h14c2.2 0 4 1.8 4 4H4Z", fill="var(--pink)")
+          circle(cx="15", cy="6", r="2.4", fill="var(--pink-deep)")
+          rect(x="14.2", y="8.4", width="1.6", height="3", fill="var(--brown-soft)")
+        span.brand #{title}
+
+      nav.tabs(aria-label="Primary")
+        button(data-route="home", onclick="go('home')", aria-current="page") Menu
+        button(data-route="login", onclick="go('login')") Log in
+        button(data-route="register", onclick="go('register')") Register
+        button(data-route="orders", onclick="go('orders')") My Orders
+    
     block content
-    script(src='/javascripts/bootstrap.min.js')
+
+    script(src='/javascripts/cake-app.js')
 

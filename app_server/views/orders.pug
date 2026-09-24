@@ -1,0 +1,17 @@
+        section.screen#screen-orders
+          .orders-wrap#ordersLoggedOut(style="display:none")
+            .locked-state
+              svg(viewBox="0 0 60 60", fill="none", xmlns="http://www.w3.org/2000/svg", aria-hidden="true")
+                rect(x="10", y="26", width="40", height="26", rx="8", fill="var(--pink-blush)")
+                path(d="M18 26v-6a12 12 0 0 1 24 0v6", stroke="var(--brown-mid)", stroke-width="4", fill="none", stroke-linecap="round")
+                circle(cx="30", cy="38", r="4.5", fill="var(--pink-deep)")
+              h3 Log in to see your orders
+              p Once you're signed in, every cake you order will show up here with live status.
+              button.btn-primary(onclick="go('login')") Log in
+
+          .orders-wrap#ordersLoggedIn(style="display:none")
+            .orders-header
+              div
+                h1 My orders
+                p#ordersSubtitle Everything you've ordered from us.
+            #ordersList  

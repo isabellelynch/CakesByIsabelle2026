@@ -1,0 +1,29 @@
+section.screen#screen-register
+          .auth-wrap
+            .auth-card
+              .auth-icon
+                svg(viewBox="0 0 60 60", fill="none", xmlns="http://www.w3.org/2000/svg", aria-hidden="true")
+                  circle(cx="30", cy="21", r="10", fill="var(--pink-blush)")
+                  path(d="M30 15a6 6 0 0 1 6 6", stroke="var(--pink-deep)", stroke-width="2.5", fill="none", stroke-linecap="round")
+                  path(d="M12 50c2-11 9.5-17 18-17s16 6 18 17", stroke="var(--brown-mid)", stroke-width="4", fill="none", stroke-linecap="round")
+              h2 Create your account
+              p.sub Save your details for faster checkout.
+
+              form(onsubmit="return handleRegister(event)", novalidate)
+                .field
+                  label(for="regName") Full name
+                  input(type="text", id="regName", autocomplete="name", placeholder="Jane Doe", required)
+                  .field-error#regNameError
+                .field
+                  label(for="regEmail") Email
+                  input(type="email", id="regEmail", autocomplete="email", placeholder="you@example.com", required)
+                  .field-error#regEmailError
+                .field
+                  label(for="regPassword") Password
+                  input(type="password", id="regPassword", autocomplete="new-password", placeholder="At least 8 characters", required)
+                  .field-error#regPasswordError
+                button.auth-submit(type="submit") Create account
+
+              .auth-switch
+                | Already have an account?
+                button(type="button", onclick="go('login')") Log in

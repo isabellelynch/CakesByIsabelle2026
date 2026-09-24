@@ -1,0 +1,28 @@
+section.screen#screen-login
+          .auth-wrap
+            .auth-card
+              .auth-icon
+                svg(viewBox="0 0 60 60", fill="none", xmlns="http://www.w3.org/2000/svg", aria-hidden="true")
+                  rect(x="10", y="26", width="40", height="26", rx="8", fill="var(--pink-blush)")
+                  path(d="M18 26v-6a12 12 0 0 1 24 0v6", stroke="var(--brown-mid)", stroke-width="4", fill="none", stroke-linecap="round")
+                  circle(cx="30", cy="38", r="4.5", fill="var(--pink-deep)")
+                  rect(x="28.5", y="40", width="3", height="7", rx="1.5", fill="var(--pink-deep)")
+              h2 Welcome back
+              p.sub Log in to track your orders.
+
+              .form-note#loginNote(style="display:none")
+
+              form(onsubmit="return handleLogin(event)", novalidate)
+                .field
+                  label(for="loginEmail") Email
+                  input(type="email", id="loginEmail", autocomplete="email", placeholder="you@example.com", required)
+                  .field-error#loginEmailError
+                .field
+                  label(for="loginPassword") Password
+                  input(type="password", id="loginPassword", autocomplete="current-password", placeholder="••••••••", required)
+                  .field-error#loginPasswordError
+                button.auth-submit(type="submit") Log in
+
+              .auth-switch
+                | New here?
+                button(type="button", onclick="go('register')") Create an account

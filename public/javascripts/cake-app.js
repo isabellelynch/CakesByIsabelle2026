@@ -228,6 +228,7 @@
   const ROUTES = ['home', 'login', 'register', 'orders'];
 
   function go(route) {
+    if(route == null || route == undefined) return;
     if (!ROUTES.includes(route)) route = 'home';
     ROUTES.forEach(r => {
       document.getElementById('screen-' + r).classList.toggle('active', r === route);
