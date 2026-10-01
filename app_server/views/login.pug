@@ -15,9 +15,6 @@ block content
                 h2.h3.text-center.mt-3 Welcome back
                 p.text-center.text-body-secondary.mb-4 Log in to track your orders.
 
-                if note
-                  .alert.alert-cake.small(role="status")= note
-
                 form(method="post", action="/login", novalidate)
                   .mb-3
                     label.form-label.fw-semibold.small(for="loginEmail") Email
