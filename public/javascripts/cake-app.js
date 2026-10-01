@@ -1,4 +1,4 @@
-
+/*
   // ---------- mock data ----------
   const CAKES = [
     { id: 'c1', name: 'Rosewater Vanilla', desc: 'Vanilla sponge, rosewater cream, sugared petals.', price: 32 },
@@ -237,3 +237,4 @@ function cakeIcon() {
       signOutBtn.classList.add('d-none');
     }
   }
+*/

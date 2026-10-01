@@ -22,13 +22,17 @@ html(lang="en")
             each l in links
               li.nav-item
                 a.nav-link.px-3(href=l[0], class={active: active === l[1]})= l[2]
-          .d-flex.align-items-center.gap-2
-            span#sessionLabel.small.session-label Not signed in
-            button#signOutBtn.btn.btn-outline-light.btn-sm.rounded-pill.d-none(type="button", onclick="signOut()") Sign out
+                .d-flex.align-items-center.gap-2
+          if user
+            span.small.session-label Hi, #{user.name.split(' ')[0]}
+            form(method="post", action="/logout")
+              button.btn.btn-outline-light.btn-sm.rounded-pill(type="submit") Sign out
+          else
+            span.small.session-label Not signed in
+          button#signOutBtn.btn.btn-outline-light.btn-sm.rounded-pill.d-none(type="button", onclick="signOut()") Sign out
 
     include mixins/icons
 
     block content
 
     script(src="/javascripts/bootstrap.min.js")
-    script(src="/javascripts/cake-app.js")

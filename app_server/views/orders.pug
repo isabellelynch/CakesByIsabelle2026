@@ -1,17 +1,32 @@
 extends layout
 
 block content
-  main
-    section.screen#screen-orders
-      #ordersLoggedOut.container.py-5.d-none(style="max-width:880px")
-        .text-center.py-5
-          +cakeIcon(88)
-          h2.h4 Log in to see your orders
-          p.text-body-secondary.mx-auto(style="max-width:40ch") Once you're signed in, every cake you order will show up here with live status.
-          button.btn.btn-primary.rounded-pill.px-4(type="button") Log in
-
-      #ordersLoggedIn.container.py-5.d-none(style="max-width:880px")
-        .mb-4
-          h1.h2 My orders
-          p#ordersSubtitle.text-body-secondary.mb-0 Everything you've ordered from us.
-        #ordersList
+  main.flex-grow-1
+    section#screen-orders
+      .container.py-5
+        if !user
+          .text-center.py-5
+            h1.h3 My Orders
+            p.text-body-secondary Log in to see your orders.
+            a.btn.btn-primary.rounded-pill.px-4(href="/login") Log in
+        else
+          h1.h3 My Orders
+          p.text-body-secondary.mb-4 Signed in as #{user.name}
+          if orders.length === 0
+            .text-center.text-body-secondary.py-5
+              .mb-3
+                +cakeIcon(52)
+              h2.h5 No orders yet
+              p.mb-0 Head to the menu and pick something for the weekend.
+          else
+            - const statusLabel = { baking: 'Baking', ready: 'Ready for pickup', delivered: 'Delivered' }
+            - const statusClass = { baking: 'bg-warning-subtle text-warning-emphasis', ready: 'price-badge', delivered: 'bg-success-subtle text-success-emphasis' }
+            each o in orders
+              .card.mb-3
+                .card-body.d-flex.flex-wrap.align-items-center.gap-3
+                  +cakeIcon(52)
+                  .flex-grow-1
+                    h3.h6.fw-semibold.mb-1= o.cake
+                    .small.text-body-secondary Order ##{o.id} · #{o.date}
+                  span.badge.rounded-pill(class=statusClass[o.status])= statusLabel[o.status]
+                  .fw-semibold.text-end.ms-auto(style="min-width:56px") €#{o.price}
