@@ -1,17 +1,27 @@
 const cakes = require('../data/cakes.json');
-const store = require('../data/users');
+const users = require('../data/users.json');
+const orders = {}; 
 
 const isValidEmail = v => /^[^\s@]+@[^\s@]+\.[^\s@]+$/.test(v);
 const today = () => new Date().toLocaleDateString('en-IE', { day: 'numeric', month: 'short' });
 
 // ---------- home ----------
 const home = (req, res) => {
-  res.render('index', { title: 'Home', active: 'home', cakes });
+  res.render('index', { 
+    title: 'Home', 
+    active: 'home', 
+    cakes 
+  });
 };
 
 // ---------- login ----------
 const loginPage = (req, res) => {
-  res.render('login', { title: 'Login', active: 'login', errors: {}, values: {} });
+  res.render('login', { 
+    title: 'Login', 
+    active: 'login', 
+    errors: {}, 
+    values: {} 
+  });
 };
 
 const login = (req, res) => {
@@ -22,7 +32,7 @@ const login = (req, res) => {
   if (!isValidEmail(email)) errors.email = 'Enter a valid email address.';
   if (!password) errors.password = 'Enter your password.';
 
-  const user = store.users[email];
+  const user = users.find(u => u.email === email);
   if (!Object.keys(errors).length && (!user || user.password !== password)) {
     errors.password = 'Email or password is incorrect.';
   }
@@ -36,7 +46,12 @@ const login = (req, res) => {
 
 // ---------- register ----------
 const registerPage = (req, res) => {
-  res.render('register', { title: 'Register', active: 'register', errors: {}, values: {} });
+  res.render('register', { 
+    title: 'Register', 
+    active: 'register', 
+    errors: {}, 
+    values: {} 
+  });
 };
 
 const register = (req, res) => {
@@ -47,15 +62,15 @@ const register = (req, res) => {
 
   if (name.length < 2) errors.name = 'Enter your full name.';
   if (!isValidEmail(email)) errors.email = 'Enter a valid email address.';
-  else if (store.users[email]) errors.email = 'An account with this email already exists.';
+  else if (users.find(u => u.email === email)) errors.email = 'An account with this email already exists.';
   if (password.length < 8) errors.password = 'Use at least 8 characters.';
 
   if (Object.keys(errors).length) {
     return res.render('register', { title: 'Register', active: 'register', errors, values: { name, email } });
   }
 
-  store.users[email] = { name, password };
-  store.orders[email] = [];
+  users.push({ name, email, password });
+  orders[email] = [];
   req.session.user = { email, name };
   res.redirect('/orders');
 };
@@ -70,7 +85,7 @@ const ordersPage = (req, res) => {
   res.render('orders', {
     title: 'My Orders',
     active: 'orders',
-    orders: user ? (store.orders[user.email] || []) : []
+    orders: user ? (orders[user.email] || []) : []
   });
 };
 
@@ -81,12 +96,15 @@ const addOrder = (req, res) => {
   const user = req.session.user;
   if (!user) {
     return res.render('login', {
-      title: 'Login', active: 'login', errors: {}, values: {},
+      title: 'Login', 
+      active: 'login', 
+      errors: {}, 
+      values: {},
       note: `Log in (or create an account) to order the ${cake.name}.`
     });
   }
 
-  (store.orders[user.email] ||= []).unshift({
+  (orders[user.email] ||= []).unshift({
     id: 'o' + Math.floor(1000 + Math.random() * 9000),
     cake: cake.name,
     date: today(),

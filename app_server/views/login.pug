@@ -1,31 +1,36 @@
 extends layout
 
 block content
-  main
-  section.screen#screen-login
-    .container.py-5
-      .row.justify-content-center
-        .col-12.col-sm-10.col-md-7.col-lg-5.col-xl-4
-          .card.auth-card.shadow-sm
-            .card-body.p-4.p-sm-5.pt-sm-5
-              .text-center.mb-2
-                +lockIcon()
-              h2.h3.text-center.mt-3 Welcome back
-              p.text-center.text-body-secondary.mb-4 Log in to track your orders.
+  - const e = errors || {}
+  - const v = values || {}
+  main.flex-grow-1
+    section.screen#screen-login
+      .container.py-5
+        .row.justify-content-center
+          .col-12.col-sm-10.col-md-7.col-lg-5.col-xl-4
+            .card.auth-card.shadow-sm
+              .card-body.p-4.p-sm-5.pt-sm-5
+                .text-center.mb-2
+                  +lockIcon()
+                h2.h3.text-center.mt-3 Welcome back
+                p.text-center.text-body-secondary.mb-4 Log in to track your orders.
 
-              #loginNote.alert.alert-cake.small.d-none(role="status")
+                if note
+                  .alert.alert-cake.small(role="status")= note
 
-              form(onsubmit="return handleLogin(event)", novalidate)
-                .mb-3
-                  label.form-label.fw-semibold.small(for="loginEmail") Email
-                  input#loginEmail.form-control(type="email", autocomplete="email", placeholder="you@example.com", required)
-                  #loginEmailError.invalid-feedback
-                .mb-3
-                  label.form-label.fw-semibold.small(for="loginPassword") Password
-                  input#loginPassword.form-control(type="password", autocomplete="current-password", placeholder="••••••••", required)
-                  #loginPasswordError.invalid-feedback
-                button.btn.btn-primary.w-100.mt-2(type="submit") Log in
+                form(method="post", action="/login", novalidate)
+                  .mb-3
+                    label.form-label.fw-semibold.small(for="loginEmail") Email
+                    input#loginEmail.form-control(type="email", name="email", value=v.email, class={'is-invalid': e.email}, autocomplete="email", placeholder="you@example.com")
+                    if e.email
+                      .invalid-feedback= e.email
+                  .mb-3
+                    label.form-label.fw-semibold.small(for="loginPassword") Password
+                    input#loginPassword.form-control(type="password", name="password", class={'is-invalid': e.password}, autocomplete="current-password", placeholder="••••••••")
+                    if e.password
+                      .invalid-feedback= e.password
+                  button.btn.btn-primary.w-100.mt-2(type="submit") Log in
 
-              p.text-center.small.text-body-secondary.mt-4.mb-0
-                | New here? 
-                a.fw-semibold(href="/register") Create an account
+                p.text-center.small.text-body-secondary.mt-4.mb-0
+                  | New here? 
+                  a.fw-semibold(href="/register") Create an account
