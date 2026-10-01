@@ -1,13 +1,17 @@
-section.screen.d-none#screen-orders
-  #ordersLoggedOut.container.py-5.d-none(style="max-width:880px")
-    .text-center.py-5
-      +cakeIcon(88)
-      h2.h4 Log in to see your orders
-      p.text-body-secondary.mx-auto(style="max-width:40ch") Once you're signed in, every cake you order will show up here with live status.
-      button.btn.btn-primary.rounded-pill.px-4(type="button", onclick="go('login')") Log in
+extends layout
 
-  #ordersLoggedIn.container.py-5.d-none(style="max-width:880px")
-    .mb-4
-      h1.h2 My orders
-      p#ordersSubtitle.text-body-secondary.mb-0 Everything you've ordered from us.
-    #ordersList
+block content
+  main
+    section.screen#screen-orders
+      #ordersLoggedOut.container.py-5.d-none(style="max-width:880px")
+        .text-center.py-5
+          +cakeIcon(88)
+          h2.h4 Log in to see your orders
+          p.text-body-secondary.mx-auto(style="max-width:40ch") Once you're signed in, every cake you order will show up here with live status.
+          button.btn.btn-primary.rounded-pill.px-4(type="button") Log in
+
+      #ordersLoggedIn.container.py-5.d-none(style="max-width:880px")
+        .mb-4
+          h1.h2 My orders
+          p#ordersSubtitle.text-body-secondary.mb-0 Everything you've ordered from us.
+        #ordersList

@@ -2,7 +2,7 @@ extends layout
 
 block content
   main.flex-grow-1
-    section.screen.d-none#screen-home
+    section#screen-home
       .container.py-5
         .row.align-items-center.g-5
           .col-md-7
@@ -12,8 +12,8 @@ block content
               Every order is baked fresh the morning it ships — no freezers, no shortcuts.
               Pick a favourite below, or tell us the occasion and we'll build something around it.
             .d-flex.flex-wrap.gap-2.mt-4
-              button.btn.btn-primary.btn-lg.rounded-pill.px-4(type="button", onclick="go('register')") Create an account
-              button.btn.btn-outline-secondary.btn-lg.rounded-pill.px-4(type="button", onclick="go('login')") Sign in
+              a.btn.btn-primary.btn-lg.rounded-pill.px-4(href="/register") Create an account
+              a.btn.btn-outline-secondary.btn-lg.rounded-pill.px-4(href="/login") Sign in
           .col-md-5.order-first.order-md-last.text-center
             +cakeIcon(400)
 
@@ -22,7 +22,3 @@ block content
           h2.h3.mb-0 This week's menu
           p.text-body-secondary.mb-0 Order by Thursday for weekend collection.
         #cakeGrid.row.g-4
-    
-    include login
-    include register
-    include orders
