@@ -1,6 +1,6 @@
 const cakes = require('../data/cakes.json');
 const users = require('../data/users.json');
-const orders = {}; 
+const orders = require('../data/orders.json'); 
 
 const isValidEmail = v => /^[^\s@]+@[^\s@]+\.[^\s@]+$/.test(v);
 const today = () => new Date().toLocaleDateString('en-IE', { day: 'numeric', month: 'short' });
@@ -70,7 +70,6 @@ const register = (req, res) => {
   }
 
   users.push({ name, email, password });
-  orders[email] = [];
   req.session.user = { email, name };
   res.redirect('/orders');
 };
@@ -85,7 +84,7 @@ const ordersPage = (req, res) => {
   res.render('orders', {
     title: 'My Orders',
     active: 'orders',
-    orders: user ? (orders[user.email] || []) : []
+    orders: user ? orders.filter(o => o.email.toLowerCase() === user.email) : []
   });
 };
 
@@ -104,9 +103,10 @@ const addOrder = (req, res) => {
     });
   }
 
-  (orders[user.email] ||= []).unshift({
-    id: 'o' + Math.floor(1000 + Math.random() * 9000),
+  orders.unshift({
+    id: '00' + Math.floor(1000 + Math.random() * 9000),
     cake: cake.name,
+    email: user.email,
     date: today(),
     status: 'baking',
     price: cake.price
