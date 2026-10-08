@@ -26,7 +26,7 @@ block content
                 .card-body.d-flex.flex-wrap.align-items-center.gap-3
                   +cakeIcon(52)
                   .flex-grow-1
-                    h3.h6.fw-semibold.mb-1= o.cake
-                    .small.text-body-secondary Order ##{o.id} · #{o.date}
+                    h3.h6.fw-semibold.mb-1= o.cake.name
+                    .small.text-body-secondary Order ##{o._id} · #{o.deliveryDate.toLocaleDateString('en-GB', { day: 'numeric', month: 'short', year: 'numeric' })}
                   span.badge.rounded-pill(class=statusClass[o.status])= statusLabel[o.status]
                   .fw-semibold.text-end.ms-auto(style="min-width:56px") €#{o.price}

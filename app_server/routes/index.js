@@ -1,14 +1,13 @@
 const express = require('express');
 const router = express.Router();
-const ctrl = require('../controllers/main');
+const ctrlMain = require('../controllers/main');
 
-router.get('/', ctrl.home);
-router.get('/login', ctrl.loginPage);
-router.post('/login', ctrl.login);
-router.get('/register', ctrl.registerPage);
-router.post('/register', ctrl.register);
-router.post('/logout', ctrl.logout);
-router.get('/orders', ctrl.ordersPage);
-router.post('/orders', ctrl.addOrder);
+router.get('/',          ctrlMain.index);
+router.get('/orders',    ctrlMain.orders);
+router.get('/login',     ctrlMain.loginPage);
+router.post('/login',    ctrlMain.loginPost);
+router.get('/register',  ctrlMain.registerPage);
+router.post('/register', ctrlMain.registerPost);
+router.post('/logout', ctrlMain.logout);
 
 module.exports = router;

@@ -1,117 +1,60 @@
-const cakes = require('../data/cakes.json');
-const users = require('../data/users.json');
-const orders = require('../data/orders.json'); 
+const Cake  = require('../models/cake');
+const Order = require('../models/order');
+const User  = require('../models/user');
 
-const isValidEmail = v => /^[^\s@]+@[^\s@]+\.[^\s@]+$/.test(v);
-const today = () => new Date().toLocaleDateString('en-IE', { day: 'numeric', month: 'short' });
-
-// ---------- home ----------
-const home = (req, res) => {
-  res.render('index', { 
-    title: 'Home', 
-    active: 'home', 
-    cakes 
-  });
+// Home page – list cakes
+const index = async (req, res, next) => {
+  try {
+    const cakes = await Cake.find();
+    res.render('index', { title: 'Cakes by Isabelle', cakes });
+  } catch (err) { next(err); }
 };
 
-// ---------- login ----------
-const loginPage = (req, res) => {
-  res.render('login', { 
-    title: 'Login', 
-    active: 'login', 
-    errors: {}, 
-    values: {} 
-  });
-};
+// Orders page
+const orders = async (req, res, next) => {
+  if (!req.session.user) return res.redirect('/login');   // must be logged in
 
-const login = (req, res) => {
-  const email = (req.body.email || '').trim().toLowerCase();
-  const password = req.body.password || '';
-  const errors = {};
-
-  if (!isValidEmail(email)) errors.email = 'Enter a valid email address.';
-  if (!password) errors.password = 'Enter your password.';
-
-  const user = users.find(u => u.email === email);
-  if (!Object.keys(errors).length && (!user || user.password !== password)) {
-    errors.password = 'Email or password is incorrect.';
-  }
-  if (Object.keys(errors).length) {
-    return res.render('login', { title: 'Login', active: 'login', errors, values: { email } });
-  }
-
-  req.session.user = { email, name: user.name };
-  res.redirect('/orders');
-};
-
-// ---------- register ----------
-const registerPage = (req, res) => {
-  res.render('register', { 
-    title: 'Register', 
-    active: 'register', 
-    errors: {}, 
-    values: {} 
-  });
-};
-
-const register = (req, res) => {
-  const name = (req.body.name || '').trim();
-  const email = (req.body.email || '').trim().toLowerCase();
-  const password = req.body.password || '';
-  const errors = {};
-
-  if (name.length < 2) errors.name = 'Enter your full name.';
-  if (!isValidEmail(email)) errors.email = 'Enter a valid email address.';
-  else if (users.find(u => u.email === email)) errors.email = 'An account with this email already exists.';
-  if (password.length < 8) errors.password = 'Use at least 8 characters.';
-
-  if (Object.keys(errors).length) {
-    return res.render('register', { title: 'Register', active: 'register', errors, values: { name, email } });
-  }
-
-  users.push({ name, email, password });
-  req.session.user = { email, name };
-  res.redirect('/orders');
+  try {
+    const orders = await Order.find({ email: req.session.user.email })
+      .populate('cake')
+      .sort({ orderDate: -1 });
+    res.render('orders', { title: 'My Orders', orders });
+  } catch (err) { next(err); }
 };
 
 const logout = (req, res) => {
   req.session.destroy(() => res.redirect('/'));
 };
 
-// ---------- orders ----------
-const ordersPage = (req, res) => {
-  const user = req.session.user;
-  res.render('orders', {
-    title: 'My Orders',
-    active: 'orders',
-    orders: user ? orders.filter(o => o.email.toLowerCase() === user.email) : []
-  });
+// Login
+const loginPage = (req, res) => {
+  res.render('login', { title: 'Log in' });
 };
 
-const addOrder = (req, res) => {
-  const cake = cakes.find(c => c.id === req.body.cakeId);
-  if (!cake) return res.redirect('/');
+const loginPost = async (req, res, next) => {
+  try {
+    const user = await User.findOne({ email: req.body.email.toLowerCase() });
+    if (!user || !(await user.checkPassword(req.body.password))) {
+      return res.render('login', { title: 'Log in', error: 'Incorrect email or password' });
+    }
+    req.session.user = { id: user._id, name: user.name, email: user.email };
+    res.redirect('/orders');
+  } catch (err) { next(err); }
+};
 
-  const user = req.session.user;
-  if (!user) {
-    return res.render('login', {
-      title: 'Login', 
-      active: 'login', 
-      errors: {}, 
-      values: {},
-      note: `Log in (or create an account) to order the ${cake.name}.`
-    });
+// Register
+const registerPage = (req, res) => {
+  res.render('register', { title: 'Register' });
+};
+
+const registerPost = async (req, res, next) => {
+  try {
+    await User.create({ name: req.body.name, email: req.body.email, password: req.body.password });
+    res.redirect('/login');
+  } catch (err) {
+    const error = err.code === 11000 ? 'That email is already registered' : err.message;
+    res.render('register', { title: 'Register', error });
   }
-
-  orders.unshift({
-    id: '00' + Math.floor(1000 + Math.random() * 9000),
-    cake: cake.name,
-    email: user.email,
-    date: today(),
-    status: 'baking',
-    price: cake.price
-  });
-  res.redirect('/orders');
 };
 
-module.exports = { home, loginPage, login, registerPage, register, logout, ordersPage, addOrder };
+module.exports = { index, orders, loginPage, loginPost, registerPage, registerPost, logout };

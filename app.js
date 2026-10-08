@@ -1,3 +1,5 @@
+require('dotenv').config();
+require('./app_server/models/db');
 var createError = require('http-errors');
 var express = require('express');
 var path = require('path');
@@ -19,7 +21,7 @@ app.use(express.urlencoded({ extended: false }));
 app.use(cookieParser());
 app.use(express.static(path.join(__dirname, 'public')));
 app.use(express.urlencoded({ extended: false }));
-app.use(session({ secret: 'cakes-by-isabelle', resave: false, saveUninitialized: false }));
+app.use(session({ secret: process.env.SESSION_SECRET, resave: false, saveUninitialized: false }));
 
 app.use((req, res, next) => {
   res.locals.user = req.session.user;

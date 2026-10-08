@@ -3,7 +3,7 @@ html(lang="en")
   head
     meta(charset="utf-8")
     meta(name="viewport", content="width=device-width, initial-scale=1")
-    title= title + ' | Cakes by Isabelle'
+    title= title ? title + ' | Cakes by Isabelle' : 'Cakes by Isabelle'
     link(rel="stylesheet", href="/stylesheets/bootstrap.min.css")
     link(rel="stylesheet", href="/stylesheets/font-awesome.min.css")
     link(rel="stylesheet", href="/stylesheets/style.css")
@@ -13,20 +13,23 @@ html(lang="en")
         a.navbar-brand.d-flex.align-items-center.gap-2.p-0(href="/")
           span.brand Cakes by Isabelle
 
-        button.navbar-toggler(type="button", data-bs-toggle="collapse", data-bs-target="#mainNav")
+        button.navbar-toggler(type="button", data-bs-toggle="collapse", data-bs-target="#mainNav", aria-controls="mainNav", aria-expanded="false", aria-label="Toggle navigation")
           span.navbar-toggler-icon
 
         #mainNav.collapse.navbar-collapse
+          //- Different menu links depending on whether someone is logged in
+          - const links = user ? [['/', 'home', 'Menu'], ['/orders', 'orders', 'My Orders']] : [['/', 'home', 'Menu'], ['/login', 'login', 'Log in'], ['/register', 'register', 'Register']]
+
           ul.navbar-nav.nav-pills.mx-md-auto.gap-md-1.my-3.my-md-0
-            - const links = [['/', 'home', 'Menu'], ['/login', 'login', 'Log in'], ['/register', 'register', 'Register'], ['/orders', 'orders', 'My Orders']]
             each l in links
               li.nav-item
                 a.nav-link.px-3(href=l[0], class={active: active === l[1]})= l[2]
-                .d-flex.align-items-center.gap-2
+
           if user
-            form(method="post", action="/logout")
-              button.btn.btn-outline-light.btn-sm.rounded-pill(type="submit") Sign out
-          button#signOutBtn.btn.btn-outline-light.btn-sm.rounded-pill.d-none(type="button", onclick="signOut()") Sign out
+            .d-flex.align-items-center.gap-2.mb-3.mb-md-0
+              span.navbar-text.text-light Hi, #{user.name.split(' ')[0]}
+              form.m-0(method="post", action="/logout")
+                button.btn.btn-outline-light.btn-sm.rounded-pill(type="submit") Sign out
 
     include mixins/icons
 
