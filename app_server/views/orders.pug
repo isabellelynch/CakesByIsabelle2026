@@ -19,14 +19,14 @@ block content
               h2.h5 No orders yet
               p.mb-0 Head to the menu and pick something for the weekend.
           else
-            - const statusLabel = { baking: 'Baking', ready: 'Ready for pickup', delivered: 'Delivered' }
-            - const statusClass = { baking: 'bg-warning-subtle text-warning-emphasis', ready: 'price-badge', delivered: 'bg-success-subtle text-success-emphasis' }
+            - const statusLabel = { pending: 'Order received', baking: 'Baking', ready: 'Ready for pickup', delivered: 'Delivered', cancelled: 'Cancelled' }
+            - const statusClass = { pending: 'bg-secondary-subtle text-secondary-emphasis', baking: 'bg-warning-subtle text-warning-emphasis', ready: 'price-badge', delivered: 'bg-success-subtle text-success-emphasis', cancelled: 'bg-danger-subtle text-danger-emphasis' }
             each o in orders
               .card.mb-3
                 .card-body.d-flex.flex-wrap.align-items-center.gap-3
                   +cakeIcon(52)
                   .flex-grow-1
-                    h3.h6.fw-semibold.mb-1= o.cake.name
+                    h3.h6.fw-semibold.mb-1= o.cake ? o.cake.name : 'Cake no longer on the menu'
                     .small.text-body-secondary Order ##{o._id} · #{o.deliveryDate.toLocaleDateString('en-GB', { day: 'numeric', month: 'short', year: 'numeric' })}
                   span.badge.rounded-pill(class=statusClass[o.status])= statusLabel[o.status]
                   .fw-semibold.text-end.ms-auto(style="min-width:56px") €#{o.price}

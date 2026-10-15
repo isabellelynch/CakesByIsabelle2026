@@ -1,7 +1,7 @@
 const mongoose = require('mongoose');
 
 const orderSchema = new mongoose.Schema({
-  _id:          { type: String },
+  _id:          { type: String, default: () => Date.now().toString() },  // order number
   email:        { type: String, required: true, lowercase: true, trim: true },
   cake:         { type: String, ref: 'Cake', required: true },
   price:        { type: Number, required: true, min: 0 },

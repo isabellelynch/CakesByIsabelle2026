@@ -12,8 +12,11 @@ block content
               Every order is baked fresh the morning it ships — no freezers, no shortcuts.
               Pick a favourite below, or tell us the occasion and we'll build something around it.
             .d-flex.flex-wrap.gap-2.mt-4
-              a.btn.btn-primary.btn-lg.rounded-pill.px-4(href="/register") Create an account
-              a.btn.btn-outline-secondary.btn-lg.rounded-pill.px-4(href="/login") Sign in
+              if user
+                a.btn.btn-primary.btn-lg.rounded-pill.px-4(href="/orders") View my orders
+              else
+                a.btn.btn-primary.btn-lg.rounded-pill.px-4(href="/register") Create an account
+                a.btn.btn-outline-secondary.btn-lg.rounded-pill.px-4(href="/login") Sign in
           .col-md-5.order-first.order-md-last.text-center
             +cakeIcon(400)
 
@@ -21,17 +24,20 @@ block content
         .d-flex.flex-wrap.justify-content-between.align-items-baseline.gap-2.mb-4
           h2.h3.mb-0 This week's menu
           p.text-body-secondary.mb-0 Order by Thursday for weekend collection.
-                #cakeGrid.row.g-4
-                  each c in cakes
-                    .col-12.col-sm-6.col-lg-4
-                      .card.h-100
-                        .card-body.d-flex.flex-column.text-center
-                          .mb-2
-                            +cakeIcon(88)
-                          h3.h5.card-title= c.name
-                          p.card-text.small.text-body-secondary= c.desc
-                          .d-flex.justify-content-between.align-items-center.mt-auto
-                            span.badge.rounded-pill.price-badge.fs-6.fw-semibold €#{c.price}
-                            form(method="post", action="/orders")
-                              input(type="hidden", name="cakeId", value=c.id)
-                              button.btn.btn-add.rounded-circle(type="submit") +
+        if cakes.length === 0
+          p.text-body-secondary.text-center.py-4 The menu is being updated – check back soon.
+        else
+          #cakeGrid.row.g-4
+            each c in cakes
+              .col-12.col-sm-6.col-lg-4
+                .card.h-100
+                  .card-body.d-flex.flex-column.text-center
+                    .mb-2
+                      +cakeIcon(88)
+                    h3.h5.card-title= c.name
+                    p.card-text.small.text-body-secondary= c.desc
+                    .d-flex.justify-content-between.align-items-center.mt-auto
+                      span.badge.rounded-pill.price-badge.fs-6.fw-semibold €#{c.price}
+                      form(method="post", action="/orders")
+                        input(type="hidden", name="cakeId", value=c.id)
+                        button.btn.btn-add.rounded-circle(type="submit", aria-label=`Order ${c.name}`, title=`Order ${c.name}`) +
