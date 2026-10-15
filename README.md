@@ -23,23 +23,3 @@ app_server/
   views/               Pug templates (layout, index, login, register, orders, error)
 public/                Bootstrap 5, Font Awesome, style.css
 ```
-
-## REST API
-
-| Method | URL | Body | Success | Errors |
-| --- | --- | --- | --- | --- |
-| GET | /api/cakes | – | 200 list | 500 |
-| POST | /api/cakes | id, name, desc, price | 201 cake | 400 |
-| GET | /api/cakes/:cakeid | – | 200 cake | 404 |
-| PUT | /api/cakes/:cakeid | name, desc and/or price | 200 cake | 400, 404 |
-| DELETE | /api/cakes/:cakeid | – | 204 | 404 |
-| GET | /api/orders?email=… | – | 200 list (cake populated) | 400 |
-| POST | /api/orders | email, cake, deliveryDate | 201 order | 400, 404 |
-| GET | /api/orders/:orderid | – | 200 order | 404 |
-| PUT | /api/orders/:orderid | status and/or deliveryDate | 200 order | 400, 404 |
-| DELETE | /api/orders/:orderid | – | 204 | 404 |
-
-Every error response is JSON with a `message`, e.g. `{ "message": "Cake not found" }`.
-
-A ready-made Postman collection is in `postman/CakesByIsabelle.postman_collection.json`
-(Postman → Import). Change the `baseUrl` variable to your Render URL to test the live app.
