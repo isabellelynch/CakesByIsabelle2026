@@ -19,19 +19,20 @@ const ordersList = async (req, res) => {
 
 // POST /api/orders   (body: email, cake, deliveryDate)
 const ordersCreate = async (req, res) => {
-  if (!req.body.email || !req.body.cake || !req.body.deliveryDate) {
+  const { email, cake: cakeId, deliveryDate } = req.body || {};
+  if (!email || !cakeId || !deliveryDate) {
     return res.status(400).json({ message: 'email, cake and deliveryDate are all required' });
   }
   try {
-    const cake = await Cake.findById(req.body.cake);
+    const cake = await Cake.findById(cakeId);
     if (!cake) {
       return res.status(404).json({ message: 'Cake not found' });
     }
     const order = await Order.create({
-      email: req.body.email,
+      email,
       cake: cake._id,
       price: cake.price,               // copy the menu price into the order
-      deliveryDate: req.body.deliveryDate
+      deliveryDate
     });
     res.status(201).json(order);
   } catch (err) {
@@ -54,13 +55,14 @@ const ordersReadOne = async (req, res) => {
 
 // PUT /api/orders/:orderid   (body: status and/or deliveryDate)
 const ordersUpdateOne = async (req, res) => {
+  const body = req.body || {};
   try {
     const order = await Order.findById(req.params.orderid);
     if (!order) {
       return res.status(404).json({ message: 'Order not found' });
     }
-    if (req.body.status) order.status = req.body.status;
-    if (req.body.deliveryDate) order.deliveryDate = req.body.deliveryDate;
+    if (body.status) order.status = body.status;
+    if (body.deliveryDate) order.deliveryDate = body.deliveryDate;
     const updatedOrder = await order.save();
     res.status(200).json(updatedOrder);
   } catch (err) {
