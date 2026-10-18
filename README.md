@@ -29,7 +29,7 @@ The project is built on the MEAN stack. This first half (50% submission, October
 | Runtime | Node.js (>= 20) |
 | Web framework | Express 5 |
 | Templates | Pug |
-| UI | Bootstrap 5.3, Font Awesome 4.7, Google Fonts (Fraunces and Work Sans) |
+| UI | Bootstrap 5.3, Google Fonts (Fraunces and Work Sans) |
 | Database | MongoDB Atlas, via Mongoose |
 | Sessions | express-session |
 | Password hashing | bcrypt.js |
@@ -127,13 +127,6 @@ The "Place order" test saves the new order's id. The tests after it read, update
 | `users` | `name`, `email` (unique), `password` (bcrypt hash), `createdAt`, `updatedAt` |
 
 Each order stores its own price, so a past order keeps the price paid even if the menu price changes later.
-
-## Coming in part 2
-
-- Call the API from the Express controllers instead of using Mongoose directly
-- Build the My Orders screen as an Angular component that uses the API
-- Move login and registration to Passport.js and run the app over HTTPS
-- Deploy the final version to Render
 
 ## Author
 
