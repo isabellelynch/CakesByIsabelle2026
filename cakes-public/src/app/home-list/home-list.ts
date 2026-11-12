@@ -1,13 +1,6 @@
-import { Component, signal } from '@angular/core';
+import { Component, OnInit, inject, ChangeDetectorRef } from '@angular/core';
 import { PricePipe } from '../price-pipe';
-
-export class Cake {
-  _id!: string;
-  name!: string;
-  desc!: string;
-  price!: number;
-  tags!: string[];
-}
+import { CakeData, Cake } from '../cake-data';
 
 @Component({
   imports: [PricePipe],
@@ -15,10 +8,23 @@ export class Cake {
   styleUrl: './home-list.css',
   templateUrl: './home-list.html',
 })
-export class HomeList {
-  cakes: Cake[] = [
-    { _id: 'c1', name: 'Chocolate Fudge Cake', desc: 'Three layers of dark chocolate sponge with fudge icing.', price: 25, tags: ['chocolate', 'serves 10'] },
-    { _id: 'c2', name: 'Lemon Drizzle', desc: 'Zesty lemon loaf with a crunchy sugar glaze.', price: 12.5, tags: ['citrus', 'serves 6', 'vegetarian'] },
-    { _id: 'c3', name: 'Raspberry Victoria Sponge', desc: 'Classic sponge with raspberry jam and fresh cream.', price: 18, tags: ['fruit', 'serves 8'] }
-  ];
+export class HomeList implements OnInit {
+  private cakeData = inject(CakeData);
+  private cdr = inject(ChangeDetectorRef);
+
+  cakes: Cake[] = [];
+
+  private async getCakes(): Promise<void> {
+    try {
+      this.cakes = await this.cakeData.getCakes();
+      console.log('Fetched cakes:', this.cakes);
+      this.cdr.detectChanges();
+    } catch (error) {
+      console.error('Error fetching cakes:', error);
+    }
+  }
+
+  ngOnInit(): void {
+    this.getCakes();
+  }
 }
