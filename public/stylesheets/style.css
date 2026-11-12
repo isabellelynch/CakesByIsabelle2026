@@ -125,3 +125,8 @@ h1, h2, h3, h4, h5, h6, .h1, .h2, .h3, .h4, .h5, .h6, .brand {
   border-color: var(--pink);
   box-shadow: 0 0 0 0.25rem rgba(217, 122, 156, 0.25);
 }
+
+a {
+  text-decoration: none;
+  color: var(--pink-deep);
+}

@@ -1,8 +1,10 @@
 extends layout
 
 block content
+  - const e = errors || {}
+  - const v = values || {}
   main.flex-grow-1
-    section#screen-register
+    section.screen#screen-register
       .container.py-5
         .row.justify-content-center
           .col-12.col-sm-10.col-md-7.col-lg-5.col-xl-4
@@ -13,21 +15,22 @@ block content
                 h2.h3.text-center.mt-3 Create your account
                 p.text-center.text-body-secondary.mb-4 Save your details for faster checkout.
 
-                #registrationNote.alert.alert-cake.small.d-none(role="status")
-
-                form(onsubmit ="return handleRegistration(event)", novalidate)
+                form(method="post", action="/register", novalidate)
                   .mb-3
                     label.form-label.fw-semibold.small(for="regName") Full name
-                    input#regName.form-control(type="text", name="name", autocomplete="name", placeholder="Jane Doe", required)
-                    #registrationNameError.invalid-feedback
+                    input#regName.form-control(type="text", name="name", value=v.name, class={'is-invalid': e.name}, autocomplete="name", placeholder="Jane Doe")
+                    if e.name
+                      .invalid-feedback= e.name
                   .mb-3
                     label.form-label.fw-semibold.small(for="regEmail") Email
-                    input#regEmail.form-control(type="email", name="email", autocomplete="email", placeholder="you@example.com", required)
-                    #registrationEmailError.invalid-feedback
+                    input#regEmail.form-control(type="email", name="email", value=v.email, class={'is-invalid': e.email}, autocomplete="email", placeholder="you@example.com")
+                    if e.email
+                      .invalid-feedback= e.email
                   .mb-3
                     label.form-label.fw-semibold.small(for="regPassword") Password
-                    input#regPassword.form-control(type="password", name="password", autocomplete="new-password", placeholder="At least 8 characters", minlength="8", required)
-                    #registrationPasswordError.invalid-feedback
+                    input#regPassword.form-control(type="password", name="password", class={'is-invalid': e.password}, autocomplete="new-password", placeholder="At least 8 characters")
+                    if e.password
+                      .invalid-feedback= e.password
                   button.btn.btn-primary.w-100.mt-2(type="submit") Create account
 
                 p.text-center.small.text-body-secondary.mt-4.mb-0
