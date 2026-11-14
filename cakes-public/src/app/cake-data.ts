@@ -13,7 +13,7 @@ export class Cake {
 @Service()
 export class CakeData {
   private http = inject(HttpClient);
-  private apiBaseUrl = 'http://localhost:3000/api';
+  private apiBaseUrl = '/api';
 
   public async getCakes(): Promise<Cake[]> {
     const url = `${this.apiBaseUrl}/cakes`;
