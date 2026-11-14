@@ -2,13 +2,10 @@ const mongoose = require('mongoose');
 const Order = mongoose.model('Order');
 const Cake  = mongoose.model('Cake');
 
-// GET /api/orders?email=you@example.com
+// GET /api/orders  - the logged-in user's orders, newest first
 const ordersList = async (req, res) => {
-  if (!req.query.email) {
-    return res.status(400).json({ message: 'An email is required, e.g. /api/orders?email=you@example.com' });
-  }
   try {
-    const orders = await Order.find({ email: req.query.email.toLowerCase() })
+    const orders = await Order.find({ email: req.user.email })
       .populate('cake')
       .sort({ orderDate: -1 });
     res.status(200).json(orders);
@@ -19,19 +16,21 @@ const ordersList = async (req, res) => {
 
 // POST /api/orders   (body: email, cake, deliveryDate)
 const ordersCreate = async (req, res) => {
-  if (!req.body.email || !req.body.cake || !req.body.deliveryDate) {
-    return res.status(400).json({ message: 'email, cake and deliveryDate are all required' });
+  const { cake: cakeId, deliveryDate } = req.body || {};
+  const email = req.user.email;
+  if (!cakeId || !deliveryDate) {
+    return res.status(400).json({ message: 'cake and deliveryDate are both required' });
   }
   try {
-    const cake = await Cake.findById(req.body.cake);
+    const cake = await Cake.findById(cakeId);
     if (!cake) {
       return res.status(404).json({ message: 'Cake not found' });
     }
     const order = await Order.create({
-      email: req.body.email,
+      email: email,
       cake: cake._id,
       price: cake.price,               // copy the menu price into the order
-      deliveryDate: req.body.deliveryDate
+      deliveryDate: deliveryDate
     });
     res.status(201).json(order);
   } catch (err) {
@@ -42,7 +41,7 @@ const ordersCreate = async (req, res) => {
 // GET /api/orders/:orderid
 const ordersReadOne = async (req, res) => {
   try {
-    const order = await Order.findById(req.params.orderid).populate('cake');
+    const order = await Order.findOne({ _id: req.params.orderid, email: req.user.email }).populate('cake');
     if (!order) {
       return res.status(404).json({ message: 'Order not found' });
     }
@@ -55,7 +54,7 @@ const ordersReadOne = async (req, res) => {
 // PUT /api/orders/:orderid   (body: status and/or deliveryDate)
 const ordersUpdateOne = async (req, res) => {
   try {
-    const order = await Order.findById(req.params.orderid);
+    const order = await Order.findOne({ _id: req.params.orderid, email: req.user.email });
     if (!order) {
       return res.status(404).json({ message: 'Order not found' });
     }
@@ -71,7 +70,7 @@ const ordersUpdateOne = async (req, res) => {
 // DELETE /api/orders/:orderid
 const ordersDeleteOne = async (req, res) => {
   try {
-    const order = await Order.findByIdAndDelete(req.params.orderid);
+    const order = await Order.findOneAndDelete({ _id: req.params.orderid, email: req.user.email });
     if (!order) {
       return res.status(404).json({ message: 'Order not found' });
     }
