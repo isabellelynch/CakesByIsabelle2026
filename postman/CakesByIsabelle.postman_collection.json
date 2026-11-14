@@ -1,0 +1,427 @@
+{
+  "info": {
+    "_postman_id": "c33f1b88-8dad-4680-b3f8-024abd52010c",
+    "name": "Cakes by Isabelle API",
+    "description": "Tests for the Cakes by Isabelle REST API. Change the baseUrl variable to switch between local (http://localhost:3000) and Render (https://cakesbyisabelle.onrender.com). Run the whole collection in order with the Collection Runner.",
+    "schema": "https://schema.getpostman.com/json/collection/v2.1.0/collection.json"
+  },
+  "item": [
+    {
+      "name": "Cakes",
+      "item": [
+        {
+          "name": "List cakes",
+          "event": [
+            {
+              "listen": "test",
+              "script": {
+                "type": "text/javascript",
+                "exec": [
+                  "pm.test('Status is 200', () => pm.response.to.have.status(200));",
+                  "pm.test('Returns a non-empty array of cakes', () => {",
+                  "  const cakes = pm.response.json();",
+                  "  pm.expect(cakes).to.be.an('array').that.is.not.empty;",
+                  "  pm.expect(cakes[0]).to.have.all.keys('_id', 'name', 'desc', 'price', '__v');",
+                  "});"
+                ]
+              }
+            }
+          ],
+          "request": {
+            "method": "GET",
+            "header": [],
+            "description": "Lists every cake on the menu.",
+            "url": {
+              "raw": "{{baseUrl}}/api/cakes",
+              "host": [
+                "{{baseUrl}}"
+              ],
+              "path": [
+                "api",
+                "cakes"
+              ]
+            }
+          }
+        },
+        {
+          "name": "One cake",
+          "event": [
+            {
+              "listen": "test",
+              "script": {
+                "type": "text/javascript",
+                "exec": [
+                  "pm.test('Status is 200', () => pm.response.to.have.status(200));",
+                  "pm.test('Returns Rosewater Vanilla', () => {",
+                  "  const cake = pm.response.json();",
+                  "  pm.expect(cake._id).to.eql('c1');",
+                  "  pm.expect(cake.name).to.eql('Rosewater Vanilla');",
+                  "  pm.expect(cake.price).to.eql(32);",
+                  "});"
+                ]
+              }
+            }
+          ],
+          "request": {
+            "method": "GET",
+            "header": [],
+            "description": "",
+            "url": {
+              "raw": "{{baseUrl}}/api/cakes/c1",
+              "host": [
+                "{{baseUrl}}"
+              ],
+              "path": [
+                "api",
+                "cakes",
+                "c1"
+              ]
+            }
+          }
+        },
+        {
+          "name": "Missing cake",
+          "event": [
+            {
+              "listen": "test",
+              "script": {
+                "type": "text/javascript",
+                "exec": [
+                  "pm.test('Status is 404', () => pm.response.to.have.status(404));",
+                  "pm.test('Returns the error message', () => {",
+                  "  pm.expect(pm.response.json().message).to.eql('Cake not found');",
+                  "});"
+                ]
+              }
+            }
+          ],
+          "request": {
+            "method": "GET",
+            "header": [],
+            "description": "Error case: a cake id that does not exist.",
+            "url": {
+              "raw": "{{baseUrl}}/api/cakes/xyz",
+              "host": [
+                "{{baseUrl}}"
+              ],
+              "path": [
+                "api",
+                "cakes",
+                "xyz"
+              ]
+            }
+          }
+        }
+      ]
+    },
+    {
+      "name": "Orders",
+      "item": [
+        {
+          "name": "Place order",
+          "event": [
+            {
+              "listen": "test",
+              "script": {
+                "type": "text/javascript",
+                "exec": [
+                  "pm.test('Status is 201', () => pm.response.to.have.status(201));",
+                  "const order = pm.response.json();",
+                  "pm.test('Order is saved with the cake price copied in', () => {",
+                  "  pm.expect(order).to.have.property('_id');",
+                  "  pm.expect(order.email).to.eql(pm.collectionVariables.get('email'));",
+                  "  pm.expect(order.cake).to.eql('c1');",
+                  "  pm.expect(order.price).to.eql(32);",
+                  "  pm.expect(order.status).to.eql('pending');",
+                  "});",
+                  "// remember the new order's id for the next requests",
+                  "pm.collectionVariables.set('orderId', order._id);"
+                ]
+              }
+            }
+          ],
+          "request": {
+            "method": "POST",
+            "header": [],
+            "description": "Creates a new order. Its id is saved in the orderId variable for the requests below.",
+            "url": {
+              "raw": "{{baseUrl}}/api/orders",
+              "host": [
+                "{{baseUrl}}"
+              ],
+              "path": [
+                "api",
+                "orders"
+              ]
+            },
+            "body": {
+              "mode": "urlencoded",
+              "urlencoded": [
+                {
+                  "key": "email",
+                  "value": "{{email}}",
+                  "type": "text"
+                },
+                {
+                  "key": "cake",
+                  "value": "c1",
+                  "type": "text"
+                },
+                {
+                  "key": "deliveryDate",
+                  "value": "2026-12-04",
+                  "type": "text"
+                }
+              ]
+            }
+          }
+        },
+        {
+          "name": "Read new order",
+          "event": [
+            {
+              "listen": "test",
+              "script": {
+                "type": "text/javascript",
+                "exec": [
+                  "pm.test('Status is 200', () => pm.response.to.have.status(200));",
+                  "pm.test('Cake is populated', () => {",
+                  "  const order = pm.response.json();",
+                  "  pm.expect(order._id).to.eql(pm.collectionVariables.get('orderId'));",
+                  "  pm.expect(order.cake.name).to.eql('Rosewater Vanilla');",
+                  "});"
+                ]
+              }
+            }
+          ],
+          "request": {
+            "method": "GET",
+            "header": [],
+            "description": "",
+            "url": {
+              "raw": "{{baseUrl}}/api/orders/{{orderId}}",
+              "host": [
+                "{{baseUrl}}"
+              ],
+              "path": [
+                "api",
+                "orders",
+                "{{orderId}}"
+              ]
+            }
+          }
+        },
+        {
+          "name": "Update order status",
+          "event": [
+            {
+              "listen": "test",
+              "script": {
+                "type": "text/javascript",
+                "exec": [
+                  "pm.test('Status is 200', () => pm.response.to.have.status(200));",
+                  "pm.test('Status changed to ready', () => {",
+                  "  pm.expect(pm.response.json().status).to.eql('ready');",
+                  "});"
+                ]
+              }
+            }
+          ],
+          "request": {
+            "method": "PUT",
+            "header": [],
+            "description": "",
+            "url": {
+              "raw": "{{baseUrl}}/api/orders/{{orderId}}",
+              "host": [
+                "{{baseUrl}}"
+              ],
+              "path": [
+                "api",
+                "orders",
+                "{{orderId}}"
+              ]
+            },
+            "body": {
+              "mode": "urlencoded",
+              "urlencoded": [
+                {
+                  "key": "status",
+                  "value": "ready",
+                  "type": "text"
+                }
+              ]
+            }
+          }
+        },
+        {
+          "name": "Bad order (no deliveryDate)",
+          "event": [
+            {
+              "listen": "test",
+              "script": {
+                "type": "text/javascript",
+                "exec": [
+                  "pm.test('Status is 400', () => pm.response.to.have.status(400));",
+                  "pm.test('Explains what failed', () => {",
+                  "  pm.expect(pm.response.json().message).to.include('deliveryDate');",
+                  "});"
+                ]
+              }
+            }
+          ],
+          "request": {
+            "method": "POST",
+            "header": [],
+            "description": "Error case: validation should reject an order without a delivery date.",
+            "url": {
+              "raw": "{{baseUrl}}/api/orders",
+              "host": [
+                "{{baseUrl}}"
+              ],
+              "path": [
+                "api",
+                "orders"
+              ]
+            },
+            "body": {
+              "mode": "urlencoded",
+              "urlencoded": [
+                {
+                  "key": "email",
+                  "value": "{{email}}",
+                  "type": "text"
+                },
+                {
+                  "key": "cake",
+                  "value": "c1",
+                  "type": "text"
+                }
+              ]
+            }
+          }
+        },
+        {
+          "name": "My orders",
+          "event": [
+            {
+              "listen": "test",
+              "script": {
+                "type": "text/javascript",
+                "exec": [
+                  "pm.test('Status is 200', () => pm.response.to.have.status(200));",
+                  "pm.test('Only this customer\\'s orders, newest first', () => {",
+                  "  const orders = pm.response.json();",
+                  "  pm.expect(orders).to.be.an('array').that.is.not.empty;",
+                  "  orders.forEach(o => pm.expect(o.email).to.eql(pm.collectionVariables.get('email')));",
+                  "  for (let i = 1; i < orders.length; i++) {",
+                  "    pm.expect(new Date(orders[i - 1].orderDate) >= new Date(orders[i].orderDate)).to.be.true;",
+                  "  }",
+                  "});"
+                ]
+              }
+            }
+          ],
+          "request": {
+            "method": "GET",
+            "header": [],
+            "description": "",
+            "url": {
+              "raw": "{{baseUrl}}/api/orders?email={{email}}",
+              "host": [
+                "{{baseUrl}}"
+              ],
+              "path": [
+                "api",
+                "orders"
+              ],
+              "query": [
+                {
+                  "key": "email",
+                  "value": "{{email}}"
+                }
+              ]
+            }
+          }
+        },
+        {
+          "name": "Delete new order",
+          "event": [
+            {
+              "listen": "test",
+              "script": {
+                "type": "text/javascript",
+                "exec": [
+                  "pm.test('Status is 204', () => pm.response.to.have.status(204));"
+                ]
+              }
+            }
+          ],
+          "request": {
+            "method": "DELETE",
+            "header": [],
+            "description": "Clean-up: removes the test order so repeated runs don't fill the database.",
+            "url": {
+              "raw": "{{baseUrl}}/api/orders/{{orderId}}",
+              "host": [
+                "{{baseUrl}}"
+              ],
+              "path": [
+                "api",
+                "orders",
+                "{{orderId}}"
+              ]
+            }
+          }
+        },
+        {
+          "name": "Deleted order is gone",
+          "event": [
+            {
+              "listen": "test",
+              "script": {
+                "type": "text/javascript",
+                "exec": [
+                  "pm.test('Status is 404', () => pm.response.to.have.status(404));",
+                  "pm.test('Returns the error message', () => {",
+                  "  pm.expect(pm.response.json().message).to.eql('Order not found');",
+                  "});"
+                ]
+              }
+            }
+          ],
+          "request": {
+            "method": "GET",
+            "header": [],
+            "description": "",
+            "url": {
+              "raw": "{{baseUrl}}/api/orders/{{orderId}}",
+              "host": [
+                "{{baseUrl}}"
+              ],
+              "path": [
+                "api",
+                "orders",
+                "{{orderId}}"
+              ]
+            }
+          }
+        }
+      ]
+    }
+  ],
+  "variable": [
+    {
+      "key": "baseUrl",
+      "value": "https://cakesbyisabelle.onrender.com"
+    },
+    {
+      "key": "email",
+      "value": "isabelle@gmail.com"
+    },
+    {
+      "key": "orderId",
+      "value": ""
+    }
+  ]
+}

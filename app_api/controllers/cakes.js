@@ -13,16 +13,12 @@ const cakesList = async (req, res) => {
 
 // POST /api/cakes
 const cakesCreate = async (req, res) => {
-  if (!req.body.id || !req.body.name || !req.body.price) {
+  const { id, name, desc, price } = req.body || {};
+  if (!id || !name || price === undefined || price === '') {
     return res.status(400).json({ message: 'id, name and price are all required' });
   }
   try {
-    const cake = await Cake.create({
-      _id: req.body.id,
-      name: req.body.name,
-      desc: req.body.desc,
-      price: req.body.price
-    });
+    const cake = await Cake.create({ _id: id, name, desc, price });
     res.status(201).json(cake);
   } catch (err) {
     if (err.code === 11000) {
@@ -47,14 +43,15 @@ const cakesReadOne = async (req, res) => {
 
 // PUT /api/cakes/:cakeid
 const cakesUpdateOne = async (req, res) => {
+  const body = req.body || {};
   try {
     const cake = await Cake.findById(req.params.cakeid);
     if (!cake) {
       return res.status(404).json({ message: 'Cake not found' });
     }
-    if (req.body.name) cake.name = req.body.name;
-    if (req.body.desc) cake.desc = req.body.desc;
-    if (req.body.price) cake.price = req.body.price;
+    if (body.name) cake.name = body.name;
+    if (body.desc !== undefined) cake.desc = body.desc;
+    if (body.price !== undefined && body.price !== '') cake.price = body.price;
     const updatedCake = await cake.save();
     res.status(200).json(updatedCake);
   } catch (err) {

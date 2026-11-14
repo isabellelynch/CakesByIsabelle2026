@@ -5,8 +5,9 @@ html(lang="en")
     meta(name="viewport", content="width=device-width, initial-scale=1")
     title= title ? title + ' | Cakes by Isabelle' : 'Cakes by Isabelle'
     link(rel="stylesheet", href="/stylesheets/bootstrap.min.css")
-    link(rel="stylesheet", href="/stylesheets/font-awesome.min.css")
     link(rel="stylesheet", href="/stylesheets/style.css")
+    base(href="/")
+    block styles
   body.d-flex.flex-column.min-vh-100
     nav.navbar.navbar-expand-md.navbar-dark.navbar-cake.sticky-top
       .container
@@ -17,7 +18,6 @@ html(lang="en")
           span.navbar-toggler-icon
 
         #mainNav.collapse.navbar-collapse
-          //- Different menu links depending on whether someone is logged in
           - const links = user ? [['/', 'home', 'Menu'], ['/orders', 'orders', 'My Orders']] : [['/', 'home', 'Menu'], ['/login', 'login', 'Log in'], ['/register', 'register', 'Register']]
 
           ul.navbar-nav.nav-pills.mx-md-auto.gap-md-1.my-3.my-md-0
@@ -36,3 +36,4 @@ html(lang="en")
     block content
 
     script(src="/javascripts/bootstrap.min.js")
+    block scripts
