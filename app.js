@@ -1,3 +1,13 @@
+require('dotenv').config();
+require('./app_api/models/db');
+var createError = require('http-errors');
+var express = require('express');
+var path = require('path');
+var cookieParser = require('cookie-parser');
+var logger = require('morgan');
+const session = require('express-session');
+const { MongoStore } = require('connect-mongo');
+const passport = require('./config/passport');
 const indexRouter = require('./app_server/routes/index');
 const apiRouter = require('./app_api/routes/index');
 
