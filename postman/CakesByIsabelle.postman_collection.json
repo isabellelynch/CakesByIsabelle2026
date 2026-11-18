@@ -2,10 +2,219 @@
   "info": {
     "_postman_id": "c33f1b88-8dad-4680-b3f8-024abd52010c",
     "name": "Cakes by Isabelle API",
-    "description": "Tests for the Cakes by Isabelle REST API. Change the baseUrl variable to switch between local (http://localhost:3000) and Render (https://cakesbyisabelle.onrender.com). Run the whole collection in order with the Collection Runner.",
+    "description": "Tests for the Cakes by Isabelle REST API, including the Passport login.\n\nBefore running: in the collection's Variables tab, set email and password (Current value) to a real account.\nbaseUrl is the Render site. To test locally, change it to https://localhost:3000 and turn off Settings > General > SSL certificate verification (the local certificate is self-signed).\n\nRun the whole collection in order with the Collection Runner. Postman keeps the session cookie between requests.",
     "schema": "https://schema.getpostman.com/json/collection/v2.1.0/collection.json"
   },
   "item": [
+    {
+      "name": "Login (Passport)",
+      "item": [
+        {
+          "name": "Log out (start clean)",
+          "event": [
+            {
+              "listen": "test",
+              "script": {
+                "type": "text/javascript",
+                "exec": [
+                  "pm.test('Logged out and sent back to the home page', () => pm.response.to.have.status(200));"
+                ]
+              }
+            }
+          ],
+          "request": {
+            "method": "POST",
+            "header": [],
+            "description": "Clears any session left over from an earlier run, so the next tests start logged out.",
+            "url": {
+              "raw": "{{baseUrl}}/logout",
+              "host": [
+                "{{baseUrl}}"
+              ],
+              "path": [
+                "logout"
+              ]
+            }
+          }
+        },
+        {
+          "name": "Orders without login",
+          "event": [
+            {
+              "listen": "test",
+              "script": {
+                "type": "text/javascript",
+                "exec": [
+                  "pm.test('Status is 401', () => pm.response.to.have.status(401));",
+                  "pm.test('Returns the error message', () => {",
+                  "  pm.expect(pm.response.json().message).to.eql('You must be logged in to do that');",
+                  "});"
+                ]
+              }
+            }
+          ],
+          "request": {
+            "method": "GET",
+            "header": [],
+            "description": "The orders API is protected by Passport: without a session it returns 401.",
+            "url": {
+              "raw": "{{baseUrl}}/api/orders",
+              "host": [
+                "{{baseUrl}}"
+              ],
+              "path": [
+                "api",
+                "orders"
+              ]
+            }
+          }
+        },
+        {
+          "name": "Add cake without login",
+          "event": [
+            {
+              "listen": "test",
+              "script": {
+                "type": "text/javascript",
+                "exec": [
+                  "pm.test('Status is 401', () => pm.response.to.have.status(401));",
+                  "pm.test('Returns the error message', () => {",
+                  "  pm.expect(pm.response.json().message).to.eql('You must be logged in to do that');",
+                  "});"
+                ]
+              }
+            }
+          ],
+          "request": {
+            "method": "POST",
+            "header": [],
+            "description": "Changing the menu also needs a logged-in user.",
+            "url": {
+              "raw": "{{baseUrl}}/api/cakes",
+              "host": [
+                "{{baseUrl}}"
+              ],
+              "path": [
+                "api",
+                "cakes"
+              ]
+            },
+            "body": {
+              "mode": "urlencoded",
+              "urlencoded": [
+                {
+                  "key": "id",
+                  "value": "c99",
+                  "type": "text"
+                },
+                {
+                  "key": "name",
+                  "value": "Test cake",
+                  "type": "text"
+                },
+                {
+                  "key": "price",
+                  "value": "10",
+                  "type": "text"
+                }
+              ]
+            }
+          }
+        },
+        {
+          "name": "Wrong password",
+          "event": [
+            {
+              "listen": "test",
+              "script": {
+                "type": "text/javascript",
+                "exec": [
+                  "pm.test('Login page is shown again with an error', () => {",
+                  "  pm.response.to.have.status(200);",
+                  "  pm.expect(pm.response.text()).to.include('Incorrect email or password');",
+                  "});"
+                ]
+              }
+            }
+          ],
+          "request": {
+            "method": "POST",
+            "header": [],
+            "description": "Passport's LocalStrategy rejects a wrong password.",
+            "url": {
+              "raw": "{{baseUrl}}/login",
+              "host": [
+                "{{baseUrl}}"
+              ],
+              "path": [
+                "login"
+              ]
+            },
+            "body": {
+              "mode": "urlencoded",
+              "urlencoded": [
+                {
+                  "key": "email",
+                  "value": "{{email}}",
+                  "type": "text"
+                },
+                {
+                  "key": "password",
+                  "value": "wrong-password",
+                  "type": "text"
+                }
+              ]
+            }
+          }
+        },
+        {
+          "name": "Log in",
+          "event": [
+            {
+              "listen": "test",
+              "script": {
+                "type": "text/javascript",
+                "exec": [
+                  "pm.test('Logged in and redirected to My Orders', () => {",
+                  "  pm.response.to.have.status(200);",
+                  "  pm.expect(pm.response.text()).to.include('Signed in as');",
+                  "});"
+                ]
+              }
+            }
+          ],
+          "request": {
+            "method": "POST",
+            "header": [],
+            "description": "Logs in with Passport. Postman keeps the session cookie, so every request after this one is logged in.",
+            "url": {
+              "raw": "{{baseUrl}}/login",
+              "host": [
+                "{{baseUrl}}"
+              ],
+              "path": [
+                "login"
+              ]
+            },
+            "body": {
+              "mode": "urlencoded",
+              "urlencoded": [
+                {
+                  "key": "email",
+                  "value": "{{email}}",
+                  "type": "text"
+                },
+                {
+                  "key": "password",
+                  "value": "{{password}}",
+                  "type": "text"
+                }
+              ]
+            }
+          }
+        }
+      ]
+    },
     {
       "name": "Cakes",
       "item": [
@@ -143,7 +352,7 @@
           "request": {
             "method": "POST",
             "header": [],
-            "description": "Creates a new order. Its id is saved in the orderId variable for the requests below.",
+            "description": "Creates a new order for the logged-in user (the email comes from the session). Its id is saved in the orderId variable for the requests below.",
             "url": {
               "raw": "{{baseUrl}}/api/orders",
               "host": [
@@ -157,11 +366,6 @@
             "body": {
               "mode": "urlencoded",
               "urlencoded": [
-                {
-                  "key": "email",
-                  "value": "{{email}}",
-                  "type": "text"
-                },
                 {
                   "key": "cake",
                   "value": "c1",
@@ -288,11 +492,6 @@
               "mode": "urlencoded",
               "urlencoded": [
                 {
-                  "key": "email",
-                  "value": "{{email}}",
-                  "type": "text"
-                },
-                {
                   "key": "cake",
                   "value": "c1",
                   "type": "text"
@@ -327,19 +526,13 @@
             "header": [],
             "description": "",
             "url": {
-              "raw": "{{baseUrl}}/api/orders?email={{email}}",
+              "raw": "{{baseUrl}}/api/orders",
               "host": [
                 "{{baseUrl}}"
               ],
               "path": [
                 "api",
                 "orders"
-              ],
-              "query": [
-                {
-                  "key": "email",
-                  "value": "{{email}}"
-                }
               ]
             }
           }
@@ -406,6 +599,66 @@
               ]
             }
           }
+        },
+        {
+          "name": "Log out",
+          "event": [
+            {
+              "listen": "test",
+              "script": {
+                "type": "text/javascript",
+                "exec": [
+                  "pm.test('Logged out', () => pm.response.to.have.status(200));"
+                ]
+              }
+            }
+          ],
+          "request": {
+            "method": "POST",
+            "header": [],
+            "description": "",
+            "url": {
+              "raw": "{{baseUrl}}/logout",
+              "host": [
+                "{{baseUrl}}"
+              ],
+              "path": [
+                "logout"
+              ]
+            }
+          }
+        },
+        {
+          "name": "Orders after logging out",
+          "event": [
+            {
+              "listen": "test",
+              "script": {
+                "type": "text/javascript",
+                "exec": [
+                  "pm.test('Status is 401', () => pm.response.to.have.status(401));",
+                  "pm.test('Returns the error message', () => {",
+                  "  pm.expect(pm.response.json().message).to.eql('You must be logged in to do that');",
+                  "});"
+                ]
+              }
+            }
+          ],
+          "request": {
+            "method": "GET",
+            "header": [],
+            "description": "After logging out the session is gone, so the API refuses again.",
+            "url": {
+              "raw": "{{baseUrl}}/api/orders",
+              "host": [
+                "{{baseUrl}}"
+              ],
+              "path": [
+                "api",
+                "orders"
+              ]
+            }
+          }
         }
       ]
     }
@@ -418,6 +671,10 @@
     {
       "key": "email",
       "value": "isabelle@gmail.com"
+    },
+    {
+      "key": "password",
+      "value": ""
     },
     {
       "key": "orderId",
