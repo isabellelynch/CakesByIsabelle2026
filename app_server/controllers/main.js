@@ -6,41 +6,21 @@ const User = mongoose.model('User');
 // Pass the browser's session cookie on to the API, so the API knows who is logged in
 const withCookie = (req) => ({ headers: { cookie: req.headers.cookie || '' } });
 
-// Home page – list cakes (from GET /api/cakes)
-const index = async (req, res, next) => {
-  try {
-    const response = await api.get('/cakes');
-    if (response.status !== 200) {
-      return next(new Error(response.data.message || 'Could not load the menu'));
-    }
-    res.render('index', { title: 'Cakes by Isabelle', active: 'home', cakes: response.data });
-  } catch (err) { next(err); }
+// Home page – the menu itself is drawn by the Angular HomeList component (GET /api/cakes)
+const index = (req, res) => {
+  res.render('index', { title: 'Cakes by Isabelle', active: 'home' });
 };
 
-// Orders page (from GET /api/orders)
-const orders = async (req, res, next) => {
+// Orders page – the list is drawn by the Angular OrdersList component (GET /api/orders)
+const orders = (req, res) => {
   if (!req.isAuthenticated()) return res.redirect('/login');   // must be logged in
-
-  try {
-    const response = await api.get('/orders', withCookie(req));
-    if (response.status !== 200) {
-      return next(new Error(response.data.message || 'Could not load your orders'));
-    }
-    // JSON sends dates as text, so turn them back into Date objects for the view
-    const orders = response.data.map(o => ({
-      ...o,
-      orderDate: new Date(o.orderDate),
-      deliveryDate: new Date(o.deliveryDate)
-    }));
-    res.render('orders', { title: 'My Orders', active: 'orders', orders });
-  } catch (err) { next(err); }
+  res.render('orders', { title: 'My Orders', active: 'orders' });
 };
 
 // Place an order (the "+" button on the menu) – POST /api/orders
 const placeOrder = async (req, res, next) => {
-  if (!req.isAuthenticated()) return res.redirect('/login');   // must be logged in
+  if (!req.isAuthenticated()) return res.redirect('/login');
 
-  // ready for collection in 3 days
   const deliveryDate = new Date();
   deliveryDate.setDate(deliveryDate.getDate() + 3);
 
@@ -48,7 +28,7 @@ const placeOrder = async (req, res, next) => {
     const response = await api.post('/orders',
       { cake: req.body.cakeId, deliveryDate },
       withCookie(req));
-    if (response.status === 404) return res.redirect('/');   // cake not on the menu
+    if (response.status === 404) return res.redirect('/');
     if (response.status !== 201) {
       return next(new Error(response.data.message || 'Could not place your order'));
     }
@@ -77,7 +57,6 @@ const loginPost = (req, res, next) => {
     return res.render('login', { title: 'Log in', active: 'login', errors, values });
   }
 
-  // Passport checks the email and password using the LocalStrategy in config/passport.js
   passport.authenticate('local', (err, user, info) => {
     if (err) return next(err);
     if (!user) {
@@ -115,7 +94,6 @@ const registerPost = async (req, res, next) => {
     return res.render('register', { title: 'Register', active: 'register', errors, values });
   }
 
-  // Log the new user straight in with Passport
   req.login(user, err => {
     if (err) return next(err);
     res.redirect('/orders');
